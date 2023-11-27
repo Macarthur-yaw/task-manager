@@ -85,10 +85,10 @@ if(message.success){
     </button> */}
 
     <span className='flex flex-col gap-2'>
-<h2 className='text-sm'>By continuing with Google, Apple, or Email, you agree to our 
+<h2 className='text-sm'>By continuing with  you agree to our 
    {''} <span className='text-[#202020] underline'>Terms of Service</span> and <span className='text-[#202020] underline'>Privacy Policy.</span></h2>
 
-<h2 className='text-center text-[#202020] '>Don't have an account? <Link to='/signup' className='underline'>Sign up</Link></h2>
+<h2 className='text-center text-[#202020] '>Don't have an account? <Link to='/' className='underline'>Login</Link></h2>
     </span>
   </div>
 </form>

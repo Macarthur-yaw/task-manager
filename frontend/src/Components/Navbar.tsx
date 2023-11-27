@@ -10,10 +10,37 @@ import { useState } from "react";
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { Link,useNavigate } from "react-router-dom";
+import axios from "axios";
+interface initialState{
+  title:string,
+  description:string
+}
 const Navbar = () => {
     const[dropdown,setDropdown]=useState<boolean>(false)
     const[settings,setSettings]=useState<boolean>(false)
     const[add,setAdd]=useState<boolean>(false)
+    const[loading,setLoading]=useState<boolean>(false)
+const[formData,setFormData]=useState<initialState>({
+  title:"",
+  description:""
+})
+ const  handleSubmit=async (e:React.FormEvent)=>{
+  e.preventDefault()
+ try {
+ const result=  await axios.post('http://localhost:5000/api/tasks',formData)
+ console.group(result.data);
+ 
+setFormData({
+  title:"",
+  description:""
+})
+setLoading(true)
+
+
+ } catch (error) {
+  console.log(error)
+ }
+}
     const navigate=useNavigate()
     const handleDropdown=()=>{
         setDropdown(prevState=>!prevState)
@@ -21,8 +48,18 @@ const Navbar = () => {
     const handleSettings=()=>{
         setSettings(true)
     }
+    const handleLogout=()=>{
+    localStorage.setItem('authentication', JSON.stringify(false))
+
+      navigate('/')
+    }
   return (
     <div className="h-screen border-[1px] bg-[#faf8f7] border-[#faf8f7] p-2 w-[20%]">
+  
+    {loading && (
+      <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" />
+    )}
+  
       <nav className="flex flex-col ">
         <div className="flex flex-col gap-4">
           <span className="flex flex-row items-center justify-between">
@@ -54,7 +91,7 @@ const Navbar = () => {
 <div className="absolute left-0 top-[-12px] w-[200px]  bg-white  h-[100px] rounded shadow-md  ">
     <ul className=" ">
         <li onClick={handleSettings} className="p-2 cursor-pointer hover:bg-[#f6efee]"><SettingsOutlinedIcon/> Settings</li> 
-        <li onClick={()=>navigate('/')} className="p-2 cursor-pointer hover:bg-[#f6efee]"><LogoutOutlinedIcon/>  Logout</li>
+        <li onClick={handleLogout} className="p-2 cursor-pointer hover:bg-[#f6efee]"><LogoutOutlinedIcon/>  Logout</li>
 </ul></div>                            </div>
                     )
                 }
@@ -131,10 +168,16 @@ const Navbar = () => {
          <div>
 <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50"> 
 <div className="bg-white w-[30%]     rounded ">
-    <form className="flex flex-col rounded-sm  gap-2 ">
+    <form onSubmit={handleSubmit} className="flex flex-col rounded-sm  gap-2 ">
         <span className="flex flex-col  border-b-[1px] ">
-        <input type="text" placeholder="Task title" className="p-2 text-xl outline-none"/>
-        <input type="text"  placeholder="Description" className="p-2  text-sm outline-none"/></span>
+        <input type="text"
+        value={formData.title}
+        onChange={(e)=>setFormData({...formData,title:e.target.value})}
+        placeholder="Task title" className="p-2 text-xl outline-none"/>
+        <input type="text"
+        value={formData.description}
+        onChange={(e)=>setFormData({...formData,description:e.target.value})}
+        placeholder="Description" className="p-2  text-sm outline-none"/></span>
 
 <span className="flex flex-row gap-2 ml-auto p-2">
     <button type="submit" className="bg-black rounded text-white p-2">Add Task</button>
