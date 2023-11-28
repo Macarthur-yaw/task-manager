@@ -45,7 +45,7 @@ const[done,setDone]=useState<boolean>(false)
 
   function handleDelete(id: string) {
     axios
-      .delete(`http://localhost:5000/api/tasks/${id}`)
+      .delete(`https://web-api-db7z.onrender.com/api/${id}`)
       .then((res) => {
         console.log(res.data);
       })

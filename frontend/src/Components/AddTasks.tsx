@@ -60,7 +60,7 @@ const AddTasks = ({ taskId,display,handleCallback,inputContent }: PropTypes) => 
   const handleChanges = async () => {
     try {
        
-      await axios.put(`http://localhost:5000/api/update/${taskId}`, formData);
+      await axios.put(`https://web-api-db7z.onrender.com/api/update/${taskId}`, formData);
     } catch (error) {
       console.log(error);
     }
