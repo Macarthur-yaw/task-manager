@@ -17,7 +17,7 @@ export default function Login(){
 const handleSubmit=async (e:React.FormEvent)=>{
 e.preventDefault()
 try {
-const result=   await axios.post('http://localhost:5000/api/signup',formData)
+const result=   await axios.post('https://web-api-db7z.onrender.com/api/signup',formData)
 const message=result.data
 console.log(message)
 setInformation(message.message)
@@ -38,7 +38,7 @@ if(message.success){
 <div className='hidden md:block'>
     <img src={bgPic} alt="bg" className="object-cover "/>
 </div>
-<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[65%]  p-8  ">
+<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[100%]  p-8  ">
 <span>
     <h1 className="text-3xl font-semibold mb-10 ">Sign up</h1>
 </span>
@@ -85,10 +85,10 @@ if(message.success){
     </button> */}
 
     <span className='flex flex-col gap-2'>
-<h2 className='text-sm'>By continuing with Google, Apple, or Email, you agree to our 
+<h2 className='text-sm'>By continuing with  you agree to our 
    {''} <span className='text-[#202020] underline'>Terms of Service</span> and <span className='text-[#202020] underline'>Privacy Policy.</span></h2>
 
-<h2 className='text-center text-[#202020] '>Don't have an account? <Link to='/signup' className='underline'>Sign up</Link></h2>
+<h2 className='text-center text-[#202020] '>Don't have an account? <Link to='/' className='underline'>Login</Link></h2>
     </span>
   </div>
 </form>

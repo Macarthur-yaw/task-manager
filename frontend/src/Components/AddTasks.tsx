@@ -1,6 +1,5 @@
 import { useState,useEffect } from "react";
 import axios from "axios";
-import React from 'react'
 interface InitialState {
   title?: string;
   description?: string;
@@ -47,7 +46,7 @@ const AddTasks = ({ taskId,display,handleCallback,inputContent }: PropTypes) => 
     e.preventDefault();
     try {
        await axios.post(
-        "http://localhost:5000/api/tasks",
+        "https://web-api-db7z.onrender.com/api/tasks",
         formData
       );
     //   console.group(result.data);
@@ -61,7 +60,7 @@ const AddTasks = ({ taskId,display,handleCallback,inputContent }: PropTypes) => 
   const handleChanges = async () => {
     try {
        
-      await axios.put(`http://localhost:5000/api/update/${taskId}`, formData);
+      await axios.put(`https://web-api-db7z.onrender.com/api/update/${taskId}`, formData);
     } catch (error) {
       console.log(error);
     }

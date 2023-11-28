@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express=require('express')
 const router=express.Router()
-const users=require('./Model')
+const { users}=require('./Model')
+const {tasks}=require('./Model')
 // const bcrypt=require('bcrypt')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const tokenSecretKey = process.env.JWT_SECRET_KEY || 'default_secret_key';
-
+// const tasks}
 router.post('/signup', async (req, res) => {
     const { email, password } = req.body;
   
@@ -57,10 +58,13 @@ router.post('/signup', async (req, res) => {
     }
   });
 router.post('/tasks',(req,res)=>{
-    const{title,Description} =req.body;
+    const{title,description,isChecked} =req.body;
+    // const isChecked=req.body;
+
     const task=new tasks({
         Title:title,
-        Description:Description,
+        Description:description
+        // isChecked:false
     })
     task.save().then(()=>{
         res.status(200).send({success:true})
@@ -73,13 +77,26 @@ router.post('/tasks',(req,res)=>{
     }).catch((err)=>{
         res.status(400).send({success:false})
     })
-}).delete('taks/:id',(req,res)=>{
-    console.log(req.params.id)
-    tasks.findByIdAndDelete(req.params.id).then(()=>{
-        res.status(200).send({success:true})
-    }).catch((err)=>{
-        res.status(400).send({success:false})
-    })
-})
+ }).delete('/tasks/:id', (req, res) => {
+     console.log(req.params.id)
+     tasks.findByIdAndDelete(req.params.id).then(() => {
+         res.status(200).send({ success: true })
+    }).catch((err) => {
+        res.status(400).send({ success: false })
+     })
+ }).put('/update/:id',(req,res)=>{
+    const {id}=req.params;
+    console.log(req.body);
+         const {title,description}=req.body;
+     tasks.findByIdAndUpdate(id,{
+         Title:title,
+         Description:description,
+     }).then(()=>{
+         res.status(200).send({success:true})
+     }).catch((err)=>{
+         res.status(400).send({success:false})
+     })    
+ })
+ 
 
 module.exports=router

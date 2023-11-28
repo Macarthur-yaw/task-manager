@@ -1,7 +1,9 @@
+// import Calender from 'react-calendar'
 const Tasks = () => {
     return ( 
         <div>
-            Tasks 
+
+{/* <Calender/> */}
         </div>
      );
 }

@@ -8,33 +8,45 @@ interface FormData{
     password:string
 
 }
+
 export default function Login(){
     const[email,setEmail]=useState<string>('')
     const [password,setPassword]=useState<string>('')
     const[information,setInformation]=useState<string>('')
-   const navigate=useNavigate()
+
+    
+//    const[loading,setLoading]=useState<boolean>(false)
+    const navigate=useNavigate()
     const  formData:FormData={
         email,
         password
     
     }
+  
+//
+    
     const handleSubmit=async (e:React.FormEvent)=>{
 e.preventDefault()
 try {
- const result= await axios.post('http://localhost:5000/api/login',formData)
+ const result= await axios.post('https://web-api-db7z.onrender.com/api/login',formData)
  const data=result.data
+ 
  setInformation(result.data.message)
  if(data.success){
     const authenticationValue = true;
-    localStorage.setItem('authentication', `${authenticationValue}`);}
- console.log(data)
+    localStorage.setItem('authentication', JSON.stringify(authenticationValue));}
+//  setLoading(true)  
+    console.log(data)
+ 
  navigate('/dashboard')
 console.log('success')
 }
 catch(err){
     console.log(err)
+    setInformation('Wrong credentials');
+
     const authenticationValue = false;
-    localStorage.setItem('authentication', `${authenticationValue}`);
+    localStorage.setItem('authentication', JSON.stringify(authenticationValue));
 }
 
 
@@ -44,7 +56,7 @@ catch(err){
 <div className='md:block hidden'>
     <img src={bgPic} alt="bg" className="object-cover "/>
 </div>
-<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[80%]  p-8  ">
+<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[100%]  p-8  ">
 <span>
     <h1 className="text-3xl font-semibold mb-10 ">Login</h1>
 </span>
@@ -80,7 +92,9 @@ onChange={(e)=>setEmail(e.target.value)}
     >
       CONTINUE
     </button>
+    <span className='text-center text-red-500'>
 {information}
+</span>
     {/* <button
       type="button"
       className="border-gray-200 text-[#242526] rounded border-[1px] p-2  hover:bg-gray-100 transition duration-300"

@@ -2,9 +2,9 @@ require('dotenv').config();
 
 const mongoose = require('mongoose');
 
-const connectionString = `mongodb+srv://arthurkevin1260:${process.env.API_KEY}@cluster0.5vopeu0.mongodb.net/?retryWrites=true&w=majority`;
+const connectionString = process.env.CONNECTION_STRING ;
 
-const connection=mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
+const connection=mongoose.connect(connectionString).then(() => {
       console.log('Connected to MongoDB');
     })
     .catch((err) => {
