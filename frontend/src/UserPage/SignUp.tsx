@@ -38,7 +38,7 @@ if(message.success){
 <div className='hidden md:block'>
     <img src={bgPic} alt="bg" className="object-cover "/>
 </div>
-<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[65%]  p-8  ">
+<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[100%]  p-8  ">
 <span>
     <h1 className="text-3xl font-semibold mb-10 ">Sign up</h1>
 </span>

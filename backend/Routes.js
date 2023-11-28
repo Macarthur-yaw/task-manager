@@ -58,10 +58,13 @@ router.post('/signup', async (req, res) => {
     }
   });
 router.post('/tasks',(req,res)=>{
-    const{title,description} =req.body;
+    const{title,description,isChecked} =req.body;
+    // const isChecked=req.body;
+
     const task=new tasks({
         Title:title,
-        Description:description,
+        Description:description
+        // isChecked:false
     })
     task.save().then(()=>{
         res.status(200).send({success:true})
@@ -81,6 +84,18 @@ router.post('/tasks',(req,res)=>{
     }).catch((err) => {
         res.status(400).send({ success: false })
      })
+ }).put('/update/:id',(req,res)=>{
+    const {id}=req.params;
+    console.log(req.body);
+         const {title,description}=req.body;
+     tasks.findByIdAndUpdate(id,{
+         Title:title,
+         Description:description,
+     }).then(()=>{
+         res.status(200).send({success:true})
+     }).catch((err)=>{
+         res.status(400).send({success:false})
+     })    
  })
  
 

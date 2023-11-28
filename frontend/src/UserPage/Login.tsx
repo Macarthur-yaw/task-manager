@@ -56,7 +56,7 @@ catch(err){
 <div className='md:block hidden'>
     <img src={bgPic} alt="bg" className="object-cover "/>
 </div>
-<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[80%]  p-8  ">
+<form onSubmit={handleSubmit} className="flex flex-col justify-center h-screen  md:w-[32%] w-[100%]  p-8  ">
 <span>
     <h1 className="text-3xl font-semibold mb-10 ">Login</h1>
 </span>
