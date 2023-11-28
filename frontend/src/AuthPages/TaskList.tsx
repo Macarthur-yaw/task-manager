@@ -34,7 +34,7 @@ const[done,setDone]=useState<boolean>(false)
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/tasks");
+      const response = await axios.get("https://web-api-db7z.onrender.com/api/tasks");
       setData(response.data.data);
     } catch (error) {
     //   setError("Error fetching data");

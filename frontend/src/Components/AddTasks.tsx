@@ -46,7 +46,7 @@ const AddTasks = ({ taskId,display,handleCallback,inputContent }: PropTypes) => 
     e.preventDefault();
     try {
        await axios.post(
-        "http://localhost:5000/api/tasks",
+        "https://web-api-db7z.onrender.com/api/tasks",
         formData
       );
     //   console.group(result.data);
