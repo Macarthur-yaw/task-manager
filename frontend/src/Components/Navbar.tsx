@@ -6,7 +6,7 @@ import ListIcon from "../assets/list.svg";
 import DashboardIcon from "../assets/dashboard.svg";
 import AddIcon from "../assets/add.svg";
 import NotifyIcon from "../assets/notifications.svg";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { Link,useNavigate } from "react-router-dom";
@@ -16,10 +16,16 @@ import AddTasks from "./AddTasks";
 // import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 // import { CloseOutlined } from '@mui/icons-material'
-import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+// import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
-
+import { ThemeContext } from "../AuthPages/Dashboard";
 const Navbar = () => {
+  const contextValue=useContext(ThemeContext)
+  // const theme = contextValue?.theme;
+  // const setTheme = contextValue?.setTheme;
+  if(contextValue?.theme){
+// const{theme,setTheme}=contextValue
+  }
     const[dropdown,setDropdown]=useState<boolean>(false)
     const[settings,setSettings]=useState<boolean>(false)
     const[add,setAdd]=useState<boolean>(false)
@@ -92,7 +98,7 @@ const[shownav,setShownav]=useState(false)
       <div onClick={(e)=>e.stopPropagation()} className="bg-white w-[100%] transform  -translate-y-1/2 absolute left-1/2  -translate-x-1/2 p-6 rounded-md md:w-[30%] ws-[100%]">
         <h2 className="text-lg font-semibold mb-4">Theme Settings</h2>
         <div className="flex flex-row items-center gap-2 mb-2">
-          <button>Light theme <WbSunnyOutlinedIcon/> </button>
+          {/* <button onClick={setTheme((prevState:boolean)=>!prevState)}>{theme ? `Dark theme ${DarkModeOutlinedIcon}` : `Light theme ${<WbSunnyOutlinedIcon/>}`}  </button> */}
           </div>
         {/* <button  className="text-blue-500 hover:text-blue-700 cursor-pointer">
           Close

@@ -1,29 +1,36 @@
-// Dashboard.tsx
-import { Outlet } from 'react-router-dom';
+import { createContext, useState } from 'react';
 import Navbar from '../Components/Navbar';
 import Login from '../UserPage/Login';
-// import useAuthenticated from '../Hooks/useAuthenticated';
-import { createContext } from 'react';
-const ThemeContext = createContext(null);
-const Dashboard = () => {
-const getItem=localStorage.getItem('authentication')
-const isAuthenticated=getItem ? JSON.parse(getItem):false 
+import { Outlet } from 'react-router';
 
+interface ThemeContextType {
+  theme: boolean;
+  setTheme: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ThemeContext = createContext<ThemeContextType | null>(null);
+
+const Dashboard = () => {
+  const getItem = localStorage.getItem('authentication');
+  const isAuthenticated = getItem ? JSON.parse(getItem) : false;
+  const [theme, setTheme] = useState<boolean>(false);
 
   return (
     <>
       <div>
         {isAuthenticated ? (
           <div className='flex flex-row'>
-            <Navbar />
-            <Outlet />
+            <ThemeContext.Provider value={{ theme, setTheme }}>
+              <Navbar />
+              <Outlet />
+            </ThemeContext.Provider>
           </div>
         ) : (
-          <Login/>
+          <Login />
         )}
       </div>
     </>
   );
 };
 
-export default Dashboard;
+export { Dashboard, ThemeContext };
