@@ -22,37 +22,45 @@ export default function Login(){
         password
     
     }
+    const [loading, setLoading] = useState<boolean>(false);
+
   
 //
     
-    const handleSubmit=async (e:React.FormEvent)=>{
-e.preventDefault()
-try {
- const result= await axios.post('https://web-api-db7z.onrender.com/api/login',formData)
- const data=result.data
- 
- setInformation(result.data.message)
- if(data.success){
-    const authenticationValue = true;
-    localStorage.setItem('authentication', JSON.stringify(authenticationValue));}
-//  setLoading(true)  
-    console.log(data)
- 
- navigate('/dashboard')
-console.log('success')
-}
-catch(err){
-    console.log(err)
-    setInformation('Wrong credentials');
-
-    const authenticationValue = false;
-    localStorage.setItem('authentication', JSON.stringify(authenticationValue));
-}
-
-
-}
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+  
+    try {
+      const result = await axios.post('https://web-api-db7z.onrender.com/api/login', formData);
+      const data = result.data;
+  
+      setInformation(result.data.message);
+  
+      if (data.success) {
+        const authenticationValue = true;
+        localStorage.setItem('authentication', JSON.stringify(authenticationValue));
+      }
+  
+      console.log(data);
+  
+      navigate('/dashboard');
+      console.log('success');
+    } catch (err) {
+      console.log(err);
+      setInformation('Wrong credentials');
+  
+      const authenticationValue = false;
+      localStorage.setItem('authentication', JSON.stringify(authenticationValue));
+    } finally {
+      setLoading(false);
+    }
+  };
+  
     return (
         <div className='flex md:flex-row-reverse flex-col gap-20 justify-center items-center  '>
+  {loading && <div className="animate-progress-line absolute top-0 " />}
+
 <div className='md:block hidden'>
     <img src={bgPic} alt="bg" className="object-cover "/>
 </div>
@@ -86,12 +94,14 @@ onChange={(e)=>setEmail(e.target.value)}
   />
 
   <div className="flex flex-col space-y-4  mt-4">
-    <button
-      type="submit"
-      className="bg-[#242526] text-white p-2  rounded  hover:bg-black transition duration-300"
-    >
-      CONTINUE
-    </button>
+  <button
+  type="submit"
+  className="bg-[#242526] text-white p-2 rounded hover:bg-black transition duration-300 relative"
+  disabled={loading}
+>
+  CONTINUE
+</button>
+
     <span className='text-center text-red-500'>
 {information}
 </span>

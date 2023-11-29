@@ -18,7 +18,7 @@ interface inputContent {
 
 const TaskList: React.FC = () => {
   const [data, setData] = useState<Task[]>([]);
-//   const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 //   const [error, setError] = useState<string | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
   const [taskId, setTaskId] = useState<string>("");
@@ -33,25 +33,31 @@ const[done,setDone]=useState<boolean>(false)
   }, [data]);
 
   const fetchData = async () => {
+    // setLoading(true);
     try {
       const response = await axios.get("https://web-api-db7z.onrender.com/api/tasks");
       setData(response.data.data);
     } catch (error) {
+        console.log(error);
     //   setError("Error fetching data");
     } finally {
-    //   setLoading(false);
+      setLoading(false);
     }
   };
 
-  function handleDelete(id: string) {
-    axios
-      .delete(`https://web-api-db7z.onrender.com/api/${id}`)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const handleDelete= async (id: string)=> {
+ setLoading(true)
+    try {
+   await axios.delete(`https://web-api-db7z.onrender.com/api/tasks/${id}`)
+}
+      catch(error){
+
+      }
+      finally{
+        setLoading(true)
+        //   fetchData()
+      }
+
   }
 
   function handleUpdate(id: string, index: number) {
@@ -81,7 +87,11 @@ setDone(true)
   }
 
   return (
-    <div className="container mx-auto w-[80%] mt-8 p-8 ">
+    <div className="container mx-auto md:w-[80%] w-[100%] mt-8 p-8 ">
+ {loading && (
+      <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" >
+      </div>
+    )} 
       <span className="">
         <h2 className="text-xl px-6 font-semibold text-gray-800">Task List</h2>
         <h3 className="px-6 text-sm">Add tasks to your project</h3>

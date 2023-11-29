@@ -16,6 +16,9 @@ import AddTasks from "./AddTasks";
 // import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 // import { CloseOutlined } from '@mui/icons-material'
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
+
 const Navbar = () => {
     const[dropdown,setDropdown]=useState<boolean>(false)
     const[settings,setSettings]=useState<boolean>(false)
@@ -55,7 +58,7 @@ const[shownav,setShownav]=useState(false)
                 <FaUserAlt />
               </span>
               <div className=" flex flex-row items-center gap-1">
-                <h1 className="text-[0.8rem] ">Kevin</h1>
+                <h1 className="text-[0.8rem] ">Hello</h1>
                 <span className="text-[12px]" onClick={handleDropdown}>
                   {" "}
                   <FaAngleDown />
@@ -81,23 +84,24 @@ const[shownav,setShownav]=useState(false)
 </ul></div>                            </div>
                     )
                 }
-
                 {
                     settings&&(
-                        <div className="absolute">
- <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded-md w-[30%]">
+<div onClick={()=>setSettings(false)} className={`${settings ? ' w-full h-screen fixed bg-opacity-50 top-0 left-0 z-20 bg-black':''}`}>
+
+                        <div  className="absolute top-1/2   md:w-[100%]">
+      <div onClick={(e)=>e.stopPropagation()} className="bg-white w-[100%] transform  -translate-y-1/2 absolute left-1/2  -translate-x-1/2 p-6 rounded-md md:w-[30%] ws-[100%]">
         <h2 className="text-lg font-semibold mb-4">Theme Settings</h2>
         <div className="flex flex-row items-center gap-2 mb-2">
-          <button>Light theme</button>
+          <button>Light theme <WbSunnyOutlinedIcon/> </button>
           </div>
-        <button  className="text-blue-500 hover:text-blue-700 cursor-pointer">
+        {/* <button  className="text-blue-500 hover:text-blue-700 cursor-pointer">
           Close
-        </button>
+        </button> */}
+      </div>
       </div>
     </div>
 
-                            </div>)
+                            )
                 }
            
           <div className="border-[1px] border-gray-100 flex flex-row items-center  gap-1 p-0.5  bg-white">
@@ -153,7 +157,7 @@ const[shownav,setShownav]=useState(false)
  {
         add&&(
          <div>
-<div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50"> 
+<div onClick={()=>setAdd(false)} className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50"> 
 <AddTasks/>
         </div>
         </div>
@@ -214,24 +218,9 @@ const[shownav,setShownav]=useState(false)
     </ul></div>                            </div>
                         )
                     }
-    
-                    {
-                        settings&&(
-                            <div className="absolute">
-     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-md w-[30%]">
-            <h2 className="text-lg font-semibold mb-4">Theme Settings</h2>
-            <div className="flex flex-row items-center gap-2 mb-2">
-              <button>Light theme</button>
-              </div>
-            <button  className="text-blue-500 hover:text-blue-700 cursor-pointer">
-              Close
-            </button>
-          </div>
-        </div>
-    
-                                </div>)
-                    }
+           
+
+
                
               <div className="border-[1px] border-gray-100 flex flex-row items-center  gap-1 p-0.5  bg-white">
                 <span className="text-gray-500 ">
@@ -288,6 +277,27 @@ const[shownav,setShownav]=useState(false)
       )
     }
     </AnimatePresence>
+
+    {settings&&(
+<div onClick={()=>setSettings(false)} className={`${settings ? ' w-full h-screen fixed md:hidden bg-opacity-50 top-0 left-0 z-20 bg-black':''} md:hidden`}>
+<div  className="md:hidden absolute top-1/2  left-1/4 w-[50%]">
+      <div onClick={(e)=>e.stopPropagation()} className="bg-white md:hidden w-[100%] transform  -translate-y-1/2 absolute left-1/2  -translate-x-1/2 p-6 rounded-md md:w-[30%] ws-[100%]">
+        <h2 className="text-lg font-semibold mb-4">Theme Settings</h2>
+        <div className="flex flex-row items-center gap-2 mb-2">
+          <button>Light theme <WbSunnyOutlinedIcon/> </button>
+          </div>
+        {/* <button  className="text-blue-500 hover:text-blue-700 cursor-pointer">
+          Close
+        </button> */}
+      </div>
+      </div>
+    </div>
+
+                            )
+                }
+   
+
+
 
     {
             add&&(

@@ -13,9 +13,11 @@ export default function Login(){
         email:'',
         password:''
     })
+    const [loading, setLoading] = useState<boolean>(false);
     const [information,setInformation]=useState<string>('')
 const handleSubmit=async (e:React.FormEvent)=>{
 e.preventDefault()
+setLoading(true)
 try {
 const result=   await axios.post('https://web-api-db7z.onrender.com/api/signup',formData)
 const message=result.data
@@ -31,10 +33,14 @@ if(message.success){
     //    const errorMessage: string = error.response.data.message;
     //    console.log(errorMessage);
     // }
+} finally{
+    setLoading(false)
 }
 }
     return (
         <div className='flex  flex-col  md:flex-row-reverse gap-20 justify-center items-center  '>
+  {loading && <div className="animate-progress-line absolute top-0 " />}
+
 <div className='hidden md:block'>
     <img src={bgPic} alt="bg" className="object-cover "/>
 </div>
