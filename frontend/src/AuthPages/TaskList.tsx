@@ -28,8 +28,13 @@ const TaskList: React.FC = () => {
   });
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 const[done,setDone]=useState<boolean>(false)
-  useEffect(() => {
+const[theme,setTheme]=useState<boolean>(false)
+useEffect(() => {
     fetchData();
+  // localStorage.getItem('themes')
+  const storedTheme = localStorage.getItem('theme');
+
+  setTheme(storedTheme ? JSON.parse(storedTheme) : false)
   }, [data]);
 
   const fetchData = async () => {
@@ -51,6 +56,7 @@ const[done,setDone]=useState<boolean>(false)
    await axios.delete(`https://web-api-db7z.onrender.com/api/tasks/${id}`)
 }
       catch(error){
+console.log(error);
 
       }
       finally{
@@ -87,13 +93,14 @@ setDone(true)
   }
 
   return (
-    <div className="container mx-auto md:w-[80%] w-[100%] mt-8 p-8 ">
+    <div className={`${theme ? 'bg-[#1e1e1e] w-full  h-screen text-white':''}`}>
+    <div className={`container mx-auto md:w-[100%] w-[100%] mt-8 p-8 `}>
  {loading && (
       <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" >
       </div>
     )} 
       <span className="">
-        <h2 className="text-xl px-6 font-semibold text-gray-800">Task List</h2>
+        <h2 className={`text-xl px-6 font-semibold  ${theme ? 'text-white':'text-gray-800'}`}>Task List</h2>
         <h3 className="px-6 text-sm">Add tasks to your project</h3>
       </span>
       <span className="">
@@ -113,7 +120,7 @@ setDone(true)
                 />
               </span>
               <li className="mb-2   flex flex-col w-full  ">
-                <strong className="text-[14px] leading-[21px] text-[#202020]">
+                <strong className={`${theme ? 'text-white':'text-[#202020]'} text-[14px] leading-[21px] `}>
                   {task.Title}
                 </strong>
                 <h3 className="text-[12px] leading-[18px] text-[#666] mb-2">
@@ -141,7 +148,9 @@ setDone(true)
       </span>
       {display && (
         <div>
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div
+          onClick={()=>setDisplay(false)}
+          className="fixed top-0 left-0 bg-black w-full h-screen bg-opacity-50 z-50">
             <AddTasks
               taskId={taskId}
               handleCallback={handleCallback}
@@ -166,6 +175,7 @@ setDone(true)
                 </div>
         )
       }
+    </div>
     </div>
   );
 };
