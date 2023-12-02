@@ -42,7 +42,7 @@ const Navbar = () => {
 
   const changeDisplay = () => {
     setTheme((prevTheme:boolean) => !prevTheme);
-
+window.location.reload()
   };
   // console.log(theme);
 
@@ -239,7 +239,7 @@ console.log(projects)
 {
   projects.map((content)=>{
     return(
-      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row hover:bg-[#f6efee] gap-4 justify-between cursor-pointer  w-full p-2">
+      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >

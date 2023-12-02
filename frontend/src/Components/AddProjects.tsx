@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Calendar from 'react-calendar'
+import Calendar from 'react-calendar';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import 'react-calendar/dist/Calendar.css';
+
 interface InitialState {
   title?: string;
   description?: string;
@@ -12,34 +13,37 @@ interface PropTypes {
   display?: boolean;
 }
 
-const AddProjects = ({  display }: PropTypes) => {
+const AddProjects = ({ display }: PropTypes) => {
   const [formData, setFormData] = useState<InitialState>({
     title: "",
   });
-const[date,setDate]=useState<Date>(new Date())
+  const [date, setDate] = useState<Date>(new Date());
   const [theme, setTheme] = useState<string | null>(null);
- const[calendar,setCalendar]=useState<boolean>(false)
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [calendar, setCalendar] = useState<boolean>(false);
+const[loading,setLoading]=useState<boolean>(false)
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     setTheme(storedTheme);
-  }, []);
-
- 
-
- 
+  }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // console.log(date);
+setLoading(true)
+    // Clear previous errors
+    setTitleError(null);
 
-const formdata={
-    title:formData.title,
-    dueDate:date.toString()
+    // Check for empty fields
+    if (!formData.title) {
+      setTitleError("Title is required");
+      return;
+    }
 
+    const formdata = {
+      title: formData.title,
+      dueDate: date.toString(),
+    };
 
-
-}
-console.log(formdata)
     try {
       await axios.post(
         "https://web-api-db7z.onrender.com/api/projects",
@@ -48,8 +52,10 @@ console.log(formdata)
     } catch (error) {
       console.log(error);
     }
+    finally{
+      setLoading(false)
+    }
   };
-
 
   function handleClick(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
@@ -57,6 +63,8 @@ console.log(formdata)
 
   return (
     <div className="">
+{loading && <div className="animate-progress-line absolute top-0 " />}
+
       <div onClick={handleClick} className={`${display && 'flex flex-col gap-6'} ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} md:w-[400px]  w-[80%] absolute z-20 left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-md `}>
         <form
           onSubmit={handleSubmit}
@@ -70,33 +78,33 @@ console.log(formdata)
                 setFormData({ ...formData, title: e.target.value })
               }
               placeholder="Project title"
-              className={`p-2 text-xl outline-none ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+              className={`p-2  text-xl outline-none ${theme === 'dark' ? 'text-white ' : 'text-black'}`}
             />
+            {titleError && <p className="text-red-500">{titleError}</p>}
 
+            <span className={`${display ? 'hidden' : 'block'} flex flex-row-reverse justify-between gap-2 ml-auto p-2`}>
+              <button
+                type="submit"
+                className={`${theme === 'dark' ? ' text-black bg-black' : ' '} rounded p-2`}
+              >
+                Add
+              </button>
 
-          <span className={`${display ? 'hidden' : 'block'} flex flex-row-reverse justify-between gap-2 ml-auto p-2`}>
-            <button
-              type="submit"
-              className={`${theme === 'dark' ? 'bg-white text-black' : 'bg-black text-white'} rounded p-2`}
-            >
-      Add    
-            </button>
-
-
-            <span onClick={()=>setCalendar(!calendar)} className="p-1 cursor-pointer  flex flex-col">
-<ScheduleIcon/>
-{calendar && (
-<div className="absolute left-6 top-[100%]">
-<Calendar value={date} onChange={()=>setDate(date)}
-className='mycalendar'
-/> </div>)}
-</span>
-          </span>
+              <span onClick={() => setCalendar(!calendar)} className="p-1 cursor-pointer  flex flex-col">
+                <ScheduleIcon />
+                {calendar && (
+                  <div className="absolute left-6 top-[100%]">
+                    <Calendar value={date} onChange={(date) => setDate(date as Date)}
+                      className='mycalendar'
+                    />
+                  </div>)}
+              </span>
+            </span>
 
           </span>
 
         </form>
-     
+
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import Calendar from "react-calendar";
+import 'react-calendar/dist/Calendar.css';
+
 interface InitialState {
   title?: string;
   description?: string;
@@ -19,10 +21,11 @@ const AddTasks = ({ taskId, display, handleCallback, inputContent }: PropTypes) 
     title: "",
     description: "",
   });
-
+  const [show, setShow] = useState<boolean>(false);
+  const [date, setDate] = useState<Date>(new Date());
   const [theme, setTheme] = useState<string | null>(null);
-const[show,setShow]=useState<boolean>(false)
-const[date,setDate]=useState<Date>(new Date())
+  const [titleError, setTitleError] = useState<string | null>(null);
+const[loading,setLoading]=useState<boolean>(false)
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     setTheme(storedTheme);
@@ -43,33 +46,45 @@ const[date,setDate]=useState<Date>(new Date())
     if (taskId) {
       handleCall();
     }
-  }, [ ]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const FormData={
-        title:formData.title,
-        description:formData.description,
-        dueDate:date.toString().slice(4,15)
+setLoading(true)
+    // Clear previous errors
+    setTitleError(null);
 
-
+    // Check for empty fields
+    if (!formData.title) {
+      setTitleError("Title is required");
+      return;
     }
+
+    const FormData = {
+      title: formData.title,
+      description: formData.description,
+      dueDate: date.toString().slice(4, 15),
+    };
+
     try {
-      await axios.post(
-        "https://web-api-db7z.onrender.com/api/tasks",
-        FormData
-      );
+      await axios.post("https://web-api-db7z.onrender.com/api/tasks", FormData);
     } catch (error) {
       console.log(error);
     }
+    finally{
+      setLoading(false)
+    }
+    
   };
 
-
   const handleChanges = async () => {
+    setLoading(true)
     try {
       await axios.put(`https://web-api-db7z.onrender.com/api/update/${taskId}`, formData);
     } catch (error) {
       console.log(error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -79,6 +94,10 @@ const[date,setDate]=useState<Date>(new Date())
 
   return (
     <div className="">
+      {loading && (
+      <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" >
+      </div>
+    )}
       <div onClick={handleClick} className={`${display && 'flex flex-col gap-6'} ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} md:w-[400px]  w-[80%] absolute z-20 left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-md `}>
         <form
           onSubmit={handleSubmit}
@@ -94,6 +113,7 @@ const[date,setDate]=useState<Date>(new Date())
               placeholder="Task title"
               className={`p-2 text-xl outline-none ${theme === 'dark' ? 'text-white' : 'text-black'}`}
             />
+            {titleError && <p className="text-red-500">{titleError}</p>}
             <input
               type="text"
               value={formData.description}
@@ -104,23 +124,23 @@ const[date,setDate]=useState<Date>(new Date())
               className={`p-2 text-sm outline-none ${theme === 'dark' ? 'text-white' : 'text-black'}`}
             />
 
-<span className="mb-2 px-2">           <span onClick={()=>setShow(!show)} className="w-[32%] justify-center items-center gap-4 border-[1px] inline-flex rounded-md text-[15px]">
-<CalendarTodayOutlinedIcon style={{fontSize:'14px'}}/>
-Due Date 
-<div className="">
-{
-    show && (
-        <div className="absolute top-[100%] left-6 ">
-<Calendar
-value={date}
-onChange={(newdate)=>setDate(newdate as Date)}
-/></div>
-    )
-}
-
-</div>
-
-            </span>
+            <span className="mb-2 px-2">           
+              <span onClick={() => setShow(!show)} className="w-[32%] justify-center items-center gap-4 border-[1px] inline-flex rounded-md text-[15px]">
+                <CalendarTodayOutlinedIcon style={{ fontSize: '14px' }} />
+                Due Date 
+                <div className="">
+                  {
+                    show && (
+                      <div className="absolute top-[100%] left-6 ">
+                        <Calendar
+                          value={date}
+                          onChange={(newdate) => setDate(newdate as Date)}
+                        />
+                      </div>
+                    )
+                  }
+                </div>
+              </span>
             </span>
 
           </span>

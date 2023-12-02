@@ -127,7 +127,7 @@ const filterChange=(status:string)=>{
 
       <main className={`${theme ? 'bg-[#1e1e1e]':''} flex md:flex-row  flex-col gap-2 justify-between`}>
       
-        <div className={`md:w-[65%]    ${theme ? 'bg-[#282828] text-white border-gray-500 border-[0.1px]':'bg-white border-white' } `}>
+        <div className={`md:w-[65%]    ${theme ? 'bg-[#282828] text-white border-gray-500 ':'bg-white border-white' } `}>
           <span className='flex flex-row items-center p-2 py-4 md:gap-6 gap-2'>
             <h1 className='md:text-xl text-md'>Tasks</h1>
             <span className='rounded-md outline-none border-[1px]  md:p-[2px]  flex flex-row md:gap-2  px-2 items-center'>
@@ -146,9 +146,9 @@ const filterChange=(status:string)=>{
               filterbox && (
                 <div className={`absolute md:w-[115px] right-5    top-5 shadow-xl rounded-sm  ${theme ? 'bg-[#282828]':'bg-white'}  `}>
                 <span className=' '>
-                  <button onClick={()=>filterChange('not_completed')} className='text-[12px] hover:bg-gray-50 w-full p-1' >Not Completed</button>
-                  <button onClick={()=>filterChange('completed')} className='text-[12px] hover:bg-gray-50 w-full p-1'>Completed</button>
-                  <button onClick={()=>filterChange('in_progress')} className='text-[12px] hover:bg-gray-50 w-full p-1'>In Progress</button>
+                  <button onClick={()=>filterChange('not_completed')} className='text-[12px]  w-full p-1' >Not Completed</button>
+                  <button onClick={()=>filterChange('completed')} className='text-[12px]  w-full p-1'>Completed</button>
+                  <button onClick={()=>filterChange('in_progress')} className='text-[12px]  w-full p-1'>In Progress</button>
                   </span>  </div>
               )
             }</div>
@@ -188,7 +188,7 @@ const filterChange=(status:string)=>{
           </ul>
         </div>
 
-        <div className={`flex flex-col gap-4 border-[1px] ${theme ? 'bg-[#282828] text-white  border-gray-500':'border-white bg-white'}  rounded-sm shadow-sm items-center justify-center`}>
+        <div className={`flex flex-col gap-4  ${theme ? 'bg-[#282828] text-white  border-gray-500':'border-white bg-white'}  rounded-sm shadow-sm items-center justify-center`}>
           <span className='md:text-xl font-medium'>Activities</span>
           <Calendar
             value={date}
