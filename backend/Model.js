@@ -20,11 +20,46 @@ const taskSchema=new mongoose.Schema({
     },
     Description:{
         type:String
+    },
+    Date:{
+type:String
+    },
+    Status:{
+
+        type:String,
+        enum:['completed','not_completed','in_progress'	],
+
+    default:'not_completed'
     }
+    
 
 
 })
+
+const projectSchema = new mongoose.Schema({
+    Title: {
+      type: String,
+      required: true,
+    },
+    Date: {
+      type: Date,
+      required: true,
+    },
+    projectTask: {
+      title: {
+        type: String,
+      },
+      description: {
+        type: String,
+      },
+      date: {
+        type: Date,
+      },
+    },  
+  });
+  
+const project=mongoose.model('project',projectSchema)
 const tasks=mongoose.model('tasks',taskSchema)
 
 const users=mongoose.model('users',userSchema)
-module.exports={users,tasks}
+module.exports={users,tasks,project}

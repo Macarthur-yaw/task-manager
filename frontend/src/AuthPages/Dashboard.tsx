@@ -13,9 +13,12 @@ const Dashboard = () => {
     <>
       <div>
         {isAuthenticated ? (
-          <div className='flex flex-row '>
+          <div className='flex flex-row  justify-between'>
               <Navbar />
+              <div className='md:w-[80%]  w-full '>
+               
               <Outlet />
+              </div>
           </div>
         ) : (
           <Login />

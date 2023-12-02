@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import Calendar from "react-calendar";
 interface InitialState {
   title?: string;
   description?: string;
@@ -20,9 +21,9 @@ const AddTasks = ({ taskId, display, handleCallback, inputContent }: PropTypes) 
   });
 
   const [theme, setTheme] = useState<string | null>(null);
-
+const[show,setShow]=useState<boolean>(false)
+const[date,setDate]=useState<Date>(new Date())
   useEffect(() => {
-    // Retrieve theme from local storage
     const storedTheme = localStorage.getItem('theme');
     setTheme(storedTheme);
   }, []);
@@ -46,15 +47,23 @@ const AddTasks = ({ taskId, display, handleCallback, inputContent }: PropTypes) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const FormData={
+        title:formData.title,
+        description:formData.description,
+        dueDate:date.toString().slice(4,15)
+
+
+    }
     try {
       await axios.post(
-        "https://web-api-db7z.onrender.com/api/tasks",
-        formData
+        "http://localhost:5000/api/tasks",
+        FormData
       );
     } catch (error) {
       console.log(error);
     }
   };
+
 
   const handleChanges = async () => {
     try {
@@ -94,6 +103,26 @@ const AddTasks = ({ taskId, display, handleCallback, inputContent }: PropTypes) 
               placeholder="Description"
               className={`p-2 text-sm outline-none ${theme === 'dark' ? 'text-white' : 'text-black'}`}
             />
+
+<span className="mb-2 px-2">           <span onClick={()=>setShow(!show)} className="w-[32%] justify-center items-center gap-4 border-[1px] inline-flex rounded-md text-[15px]">
+<CalendarTodayOutlinedIcon style={{fontSize:'14px'}}/>
+Due Date 
+<div className="">
+{
+    show && (
+        <div className="absolute top-[100%] left-6 ">
+<Calendar
+value={date}
+onChange={(newdate)=>setDate(newdate as Date)}
+/></div>
+    )
+}
+
+</div>
+
+            </span>
+            </span>
+
           </span>
 
           <span className={`${display ? 'hidden' : 'block'} flex flex-row gap-2 ml-auto p-2`}>

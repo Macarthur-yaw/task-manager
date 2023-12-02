@@ -9,7 +9,7 @@
 
 .animate-progress-line {
   width: 100%;
-  height: 1px;
+  height: 2px;
   background-color: blue;
   transform-origin: left;
   animation: moveLine 1s linear;
@@ -34,3 +34,22 @@
   100% { transform: rotate(360deg); }
 }
 
+
+.my-calendar {
+  /* width: 300px; */
+  /* max-width: 100%; */
+  /* height: 800px;s */
+  /* border: 1px solid #ddd; */
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.react-calendar{
+  border: none;
+  /* width: 350px; */
+  height: 418px;
+}
+.react-calendar__tile--now {
+  background-color: #3174ad; 
+  color: black;
+}

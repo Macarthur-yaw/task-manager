@@ -1,21 +1,12 @@
-// import {A} from '@mui/icons-material'
 import { FaUserAlt, FaAngleDown } from "react-icons/fa";
-// import  SearchIcon from '../assets/search.svg'
-
-// import ListIcon from "../assets/list.svg";
-// import DashboardIcon from "../assets/dashboard.svg";
-// import AddIcon from "../assets/add.svg";
-// import NotifyIcon from "../assets/notifications.svg";
 import {  useState } from "react";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import AddTasks from "./AddTasks";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
-// import { ThemeContext } from "../AuthPages/Dashboard";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
@@ -24,20 +15,29 @@ import AddIcon from "@mui/icons-material/Add";
 import Add from "@mui/icons-material/Add";
 import WbSunnyOutlined from "@mui/icons-material/WbSunnyOutlined";
 import { useEffect } from "react";
+import AddProjects from "./AddProjects";
+import axios from "axios";
+interface projectsTask{
+  _id:string,
+  Title:string,
+  // Description:string,
+  dueDate:Date
+}
 const Navbar = () => {
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme ? JSON.parse(storedTheme) : false;
   });
 
-  // console.log(theme);
   const [dropdown, setDropdown] = useState<boolean>(false);
   const [settings, setSettings] = useState<boolean>(false);
   const [add, setAdd] = useState<boolean>(false);
-  // const[loading,setLoading]=useState<boolean>(false)
   const [shownav, setShownav] = useState(false);
+  const[addprojects,setAddprojects]=useState<boolean>(false)
+  const[projects,setProjects]=useState<projectsTask[]>([])
   useEffect(() => {
     localStorage.setItem('theme', JSON.stringify(theme));
+    getProjects()
   }, [theme]);
 
   const changeDisplay = () => {
@@ -58,20 +58,42 @@ const Navbar = () => {
 
     navigate("/");
   };
+
+  function addProjects(){
+setAddprojects(true)  
+  }
+
+ async function getProjects(){
+try {
+ const getData= await axios.get('http://localhost:5000/api/projects')
+setProjects(getData.data)
+// console.log(getData.data);
+// console.log(projects);
+// console.log(getData.data.data)
+
+} catch (error) {
+  console.log(error)
+  
+}
+  }
+console.log(projects)
+
+
+
   return (
     <div className={`${theme ? 'bg-[#1e1e1e]  h-screen pt-6':'pl-4 pt-6 '}   md:p-0`}>
       <span
         onClick={() => setShownav(true)}
-        className={`${theme ? 'pl-4 mt-10 text-white':''} md:hidden cursor-pointer`}
+        className={`${theme ? 'pl-4 mt-2 text-white':''} h-screen md:hidden cursor-pointer absolute `}
       >
         <MenuOutlinedIcon />
       </span>
       <div
         className={`${
           theme
-            ? "bg-[#282828] border-[#282828] w-[100%] text-white"
-            : "bg-[#faf8f7] border-[#faf8f7] w-[90%]"
-        } hidden md:block h-screen border-[1px]  p-2 `}
+            ? "bg-[#282828] border-[#282828] w-[20%] text-white"
+            : "bg-[#faf8f7] border-[#faf8f7] w-[20%] shadow-md"
+        } hidden md:block md:fixed h-screen border-[1px]  p-2 `}
       >
         {/* {loading && (
       <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" />
@@ -103,7 +125,7 @@ const Navbar = () => {
                 {/* <DropDown/> */}
                 <div
                   className={`absolute left-0 top-[-12px] w-[200px] ${
-                    theme ? "bg-[#282828] text-white" : "bg-white "
+                    theme ? "bg-[#282828] text-white absolute" : "bg-white "
                   }   h-[100px] rounded shadow-md  `}
                 >
                   <ul className=" ">
@@ -160,21 +182,7 @@ const Navbar = () => {
               </div>
             )}
 
-            <div
-              className={`  flex flex-row items-center  gap-1 p-0.5 ${
-                theme ? "bg-[#282828] text-white " : "bg-white border-gray-100 border-[1px]"
-              }`}
-            >
-              <span className={`${theme ? 'text-white':'text-gray-500'}` }>
-                {" "}
-                <SearchOutlinedIcon />
-              </span>
-              <input
-                type="text"
-                placeholder="Search"
-                className={`${theme ? 'text-white placeholder:text-white':'text-gray-900'} bg-transparent outline-none  w-full`}
-              />
-            </div>
+            
           </div>
 
           <span
@@ -216,16 +224,33 @@ const Navbar = () => {
               Add Tasks
             </li>
           </ul>
-<span className="flex flex-row cursor-pointer justify-between items-center mt-10 group text-sm  w-full">
+<span className="flex flex-col cursor-pointer justify-between items-center mt-10  text-sm  w-full">
+<div className="flex flex-row justify-between cursor-pointer  w-full ">
           <span
             className={`{theme ? 'text-white':'text-gray-600'}`}
           >
             Projects
 
           </span>
-<span className="hidden group-hover:block">            <AddIcon/>
+<span className="" onClick={addProjects}>            <AddIcon/>
 </span>
-  
+</div>
+<div className="flex flex-col gap-2 mt-4 rounded w-full">
+{
+  projects.map((content)=>{
+    return(
+      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row hover:bg-[#f6efee] gap-4 justify-between cursor-pointer  w-full p-2">
+     <span
+        className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
+      >
+        {content.Title}
+
+      </span>
+      
+      </div></Link>
+  )
+})}
+  </div>
           </span>
         </nav>
         {add && (
@@ -314,23 +339,7 @@ const Navbar = () => {
                     </div>{" "}
                   </div>
                 )}
-
-                <div
-                  className={` mt-4  flex flex-row items-center  gap-1 p-0.5  ${
-                    theme ? "bg-[#282828] text-white " : "border-[1px] text-black border-gray-100"
-                  }`}
-                >
-                  <span className={`${theme ? 'text-white':'text-gray-500'} `}>
-                    {" "}
-                    <SearchOutlinedIcon />
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className={` outline-none bg-transparent  ${theme ? 'text-white':'text-gray-900' } w-full`}
-                  />
-                </div>
-              </div>
+   </div>
 
               <span
                 className={`mt-6 mb-4 text-[12px] ${
@@ -343,7 +352,7 @@ const Navbar = () => {
                 <Link to="/dashboard">
                   <li
                     className={`flex flex-row gap-2 cursor-pointer ${
-                      theme ? "text-white hover:bg-[#f6efee]" : "text-[#202020]"
+                      theme ? "text-white " : "hover:bg-[#f6efee] text-[#202020]"
                     }   rounded p-2 text-[14px] items-center `}
                   >
                     {" "}
@@ -354,7 +363,7 @@ const Navbar = () => {
                 <Link to="/dashboard/tasks">
                   <li
                     className={`flex flex-row gap-2 cursor-pointer ${
-                      theme ? "text-white hover:bg-[#f6efee]" : "text-[#202020]"
+                      theme ? "text-white " : "hover:bg-[#f6efee] text-[#202020]"
                     }   rounded p-2 text-[14px] items-center `}
                   >
                     <TaskIcon />
@@ -365,7 +374,7 @@ const Navbar = () => {
                 <li
                   onClick={() => setAdd(true)}
                   className={`flex flex-row gap-2 cursor-pointer ${
-                    theme ? "text-white hover:bg-[#f6efee]" : "text-[#202020]"
+                    theme ? "text-white " : "text-[#202020] hover:bg-[#f6efee]"
                   }   rounded p-2 text-[14px] items-center `}
                 >
                   <Add/>
@@ -379,6 +388,23 @@ const Navbar = () => {
                 }  w-full`}
               >
                 Projects
+                <div className="flex flex-col gap-2 mt-4 rounded w-full">
+{
+  projects.map((content)=>{
+    return(
+      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row gap-4 justify-between cursor-pointer  w-full p-2">
+     <span
+        className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
+      >
+        {content.Title}
+
+      </span>
+      
+      </div></Link>
+  )
+})}
+  </div>
+
               </span>
             </nav>
           </motion.div>
@@ -438,6 +464,22 @@ const Navbar = () => {
             : ""
         }`}
       ></div>
+
+
+      <div>
+        {addprojects && (
+          <div
+            onClick={() => setAddprojects(false)}
+            className={`${
+              addprojects
+                ? "top-0 left-0  bg-black bg-opacity-30 fixed w-full h-screen"
+                : ""
+            }`}
+          >
+            <AddProjects/>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

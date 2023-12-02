@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+// import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import AddTasks from "../Components/AddTasks";
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-
+import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 interface Task {
   _id: string;
   Title: string;
@@ -29,6 +29,7 @@ const TaskList: React.FC = () => {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 const[done,setDone]=useState<boolean>(false)
 const[theme,setTheme]=useState<boolean>(false)
+const[showDetails,setShowDetails]=useState<boolean>(false)
 useEffect(() => {
     fetchData();
   // localStorage.getItem('themes')
@@ -40,7 +41,7 @@ useEffect(() => {
   const fetchData = async () => {
     // setLoading(true);
     try {
-      const response = await axios.get("https://web-api-db7z.onrender.com/api/tasks");
+      const response = await axios.get("http://localhost:5000/api/tasks");
       setData(response.data.data);
     } catch (error) {
         console.log(error);
@@ -75,6 +76,18 @@ console.log(error);
     });
     handleCallback();
   }
+  const ChangeInProgress=async(id:string)=>{
+try {
+  axios.put(`http://localhost:5000/api/tasks/${id}`,{
+    status:"in_progress"
+  })
+    
+} catch (error) {
+  console.log(error)
+}
+
+    
+  }
 
   function handleCallback(dataForms?: inputContent) {
     console.log(dataForms);
@@ -86,15 +99,23 @@ console.log(error);
       [taskId]: !prevCheckedItems[taskId],
     }));
     // console.log(checkedItems);
-    handleDelete(taskId);
+    // handleDelete(taskId);
+    handleCheck(taskId)
 setDone(true)
-    
 
+  }
+  const handleCheck=async(id:string)=>{
+    try {
+      await axios.put(`http://localhost:5000/api/tasks/${id}`,{
+        status:"completed"
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
-    <div className={`${theme ? 'bg-[#1e1e1e] w-full  h-screen text-white':''}`}>
-    <div className={`container mx-auto md:w-[100%] w-[100%] mt-8 p-8 `}>
+    <div className={`${theme ? 'bg-[#1e1e1e] w-full  min-h-screen text-white':''} pt-20`}>
  {loading && (
       <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" >
       </div>
@@ -135,13 +156,30 @@ setDone(true)
                 >
                   <EditOutlinedIcon className="w-2" />{" "}
                 </button>
-                <button
+<span className="">
+<MoreVertOutlinedIcon onClick={()=>setShowDetails(!showDetails)}/>
+{ showDetails &&  (  
+<div className="border-[1px] right-4 p-1 h-fit w-[120px] bg-white border-white shadow-lg rounded-md absolute">
+<button
                   onClick={() => handleDelete(task._id)}
-                  className="text-[12px] text-[#666]"
+                  className="text-[12px] text-[#666] inline-flex gap-1 w-full items-center justify-center"
                 >
-                  <DeleteOutlineOutlinedIcon />
+                  Delete
+                 {/* Delete <DeleteOutlineOutlinedIcon /> */}
                 </button>
-              </span>
+
+{/* <button className="text-[12px] text-[#666] inline-flex gap-1 w-full items-center justify-center">
+  Completed
+</button> */}
+
+<button onClick={()=>ChangeInProgress(task._id)}
+className="text-[12px] text-[#666] inline-flex gap-1 w-full items-center justify-center">
+In progress
+</button>
+
+                </div>
+                )
+             }</span>             </span>
             </div>
           ))}
         </ul>
@@ -175,7 +213,6 @@ setDone(true)
                 </div>
         )
       }
-    </div>
     </div>
   );
 };
