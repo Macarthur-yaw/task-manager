@@ -65,7 +65,7 @@ setAddprojects(true)
 
  async function getProjects(){
 try {
- const getData= await axios.get('http://localhost:5000/api/projects')
+ const getData= await axios.get('https://web-api-db7z.onrender.com/api/projects')
 setProjects(getData.data)
 // console.log(getData.data);
 // console.log(projects);

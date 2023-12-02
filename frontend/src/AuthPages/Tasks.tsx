@@ -35,7 +35,7 @@ useEffect(() => {
    
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/tasks");
+      const response = await axios.get("https://web-api-db7z.onrender.com/api/tasks");
       setTasks(response.data.data);
       countTasks(response.data.data);
       setFilteredTasks(response.data.data)  

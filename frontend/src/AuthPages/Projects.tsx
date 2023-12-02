@@ -3,7 +3,6 @@ import { useParams } from "react-router";
 import axios from "axios";
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddProjectTask from "../Components/AddProjectTask";
 import EditOutlined from "@mui/icons-material/EditOutlined";
@@ -27,7 +26,7 @@ const[menu,setMenu]=useState<boolean>(false)
 
     async function AddTasks() {
       try {
-        const getData = await axios.get(`http://localhost:5000/api/projectTask/${id}`);
+        const getData = await axios.get(`https://web-api-db7z.onrender.com/api/projectTask/${id}`);
         if (getData.data.length > 0) {
           setProjects(getData.data);
         }
@@ -37,14 +36,11 @@ const[menu,setMenu]=useState<boolean>(false)
     }
   }, [id, theme]);
 
-  const handleEdit = (projectId: string) => {
-    // Implement the logic to handle the edit action
-    console.log(`Editing project with ID: ${projectId}`);
-  };
+  
 
   const handleDelete = async (projectId: string) => {
     try {
-      await axios.delete(`http://localhost:5000/api/projectTask/${projectId}`);
+      await axios.delete(`https://web-api-db7z.onrender.com/api/projectTask/${projectId}`);
       
       // Update the projects state after deletion
       const updatedProjects = projects.filter(project => project._id !== projectId);

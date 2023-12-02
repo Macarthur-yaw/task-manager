@@ -41,7 +41,7 @@ useEffect(() => {
   const fetchData = async () => {
     // setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/api/tasks");
+      const response = await axios.get("https://web-api-db7z.onrender.com/api/tasks");
       setData(response.data.data);
     } catch (error) {
         console.log(error);
@@ -78,7 +78,7 @@ console.log(error);
   }
   const ChangeInProgress=async(id:string)=>{
 try {
-  axios.put(`http://localhost:5000/api/tasks/${id}`,{
+  axios.put(`https://web-api-db7z.onrender.com/api/tasks/${id}`,{
     status:"in_progress"
   })
     
@@ -106,7 +106,7 @@ setDone(true)
   }
   const handleCheck=async(id:string)=>{
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${id}`,{
+      await axios.put(`https://web-api-db7z.onrender.com/api/tasks/${id}`,{
         status:"completed"
       })
     } catch (error) {

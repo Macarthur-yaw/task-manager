@@ -42,7 +42,7 @@ const formdata={
 console.log(formdata)
     try {
       await axios.post(
-        "http://localhost:5000/api/projects",
+        "https://web-api-db7z.onrender.com/api/projects",
         formdata
       );
     } catch (error) {
