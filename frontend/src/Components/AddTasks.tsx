@@ -31,30 +31,32 @@ const[loading,setLoading]=useState<boolean>(false)
     setTheme(storedTheme);
   }, []);
 
-  const handleCall = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      title: inputContent?.title,
-      description: inputContent?.description,
-    }));
-    if (handleCallback) {
-      handleCallback(formData);
-    }
-  };
-
+  
   useEffect(() => {
+   
+
+    const handleCall = () => {
+      setFormData((prevData) => ({
+        ...prevData,
+        title: inputContent?.title,
+        description: inputContent?.description,
+      }));
+      if (handleCallback) {
+        handleCallback(formData);
+      }
+    };
+
     if (taskId) {
       handleCall();
     }
-  }, []);
+  
+  }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 setLoading(true)
-    // Clear previous errors
     setTitleError(null);
 
-    // Check for empty fields
     if (!formData.title) {
       setTitleError("Title is required");
       return;
