@@ -50,8 +50,8 @@ const[loading,setLoading]=useState<boolean>(false)
       handleCall();
     }
   
-  }, [formData]);
-
+  }, []);
+  const userId=localStorage.getItem('accessToken');
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 setLoading(true)
@@ -67,9 +67,11 @@ setLoading(true)
       description: formData.description,
       dueDate: date.toString().slice(4, 15),
     };
+    // const getItem=localStorage.getItem('accesstoken')
+    
 
     try {
-      await axios.post("https://web-api-db7z.onrender.com/api/tasks", FormData);
+      await axios.post(`http://localhost:5000/api/tasks/${userId}`, FormData);
     } catch (error) {
       console.log(error);
     }
@@ -81,8 +83,9 @@ setLoading(true)
 
   const handleChanges = async () => {
     setLoading(true)
+    const id=taskId;
     try {
-      await axios.put(`https://web-api-db7z.onrender.com/api/update/${taskId}`, formData);
+      await axios.put(`http://localhost:5000/api/update/${userId}/${id}`, formData);
     } catch (error) {
       console.log(error);
     }finally{

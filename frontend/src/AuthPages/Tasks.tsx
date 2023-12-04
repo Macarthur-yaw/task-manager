@@ -27,26 +27,43 @@ const[filteredTasks,setFilteredTasks]=useState<Task[]>([])
 const[search,setSearch]=useState<string>('')
 const[filterbox,setFilterBox]=useState<boolean>(false)
 const[theme,setTheme]=useState<boolean>(false)
+// const[token,setToken]=useState<string>('')
+
+
+
+
+
 useEffect(() => {
    
    const theme= localStorage.getItem('theme')
    setTheme(theme ? JSON.parse(theme):false)
 
-   
+   const accessToken=localStorage.getItem('accessToken');
+  console.log(accessToken)
+ 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get("https://web-api-db7z.onrender.com/api/tasks");
-      setTasks(response.data.data);
-      countTasks(response.data.data);
-      setFilteredTasks(response.data.data)  
+      const id = localStorage.getItem('accessToken');
+       
+
+   
+      const response = await axios.get(`http://localhost:5000/api/tasks/${id}`);
+  if(response.data.data){
+    setTasks(response.data.data);
+    countTasks(response.data.data);
+    setFilteredTasks(response.data.data);
+  
+  }
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
   };
+  
   fetchTasks();
   
   }, [theme]);
 
+console.log(tasks);
 
   const countTasks = (taskList: Task[]) => {
     const notCompletedCount = taskList.filter(task => task.Status === 'not_completed').length;

@@ -15,6 +15,8 @@ interface Project {
 
 const Projects = () => {
   const { id } = useParams();
+  // console.log(id);
+
   const [add, setAdd] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [theme, setTheme] = useState<boolean>(false);
@@ -29,9 +31,13 @@ const[loading,setLoading]=useState<boolean>(false)
 
       try {
         // setLoading(true)
-        const getData = await axios.get(`https://web-api-db7z.onrender.com/api/projectTask/${id}`);
-        if (getData.data.length > 0) {
-          setProjects(getData.data);
+        const userId=localStorage.getItem('accessToken')
+      
+        const getData = await axios.get(`http://localhost:5000/api/projects/${userId}/${id}`);
+      // console.log(getData)
+        if (getData.data.data.length > 0) {
+          setProjects(getData.data.data);
+          // console.log(getData.data.data)
         }
       } catch (error) {
         console.log(error);
@@ -72,7 +78,7 @@ const[loading,setLoading]=useState<boolean>(false)
           Add Task
         </button>
       </span>
-      {add && <AddProjectTask projectId={id} />}
+      {add && <AddProjectTask id={id} />}
 <div className="grid md:grid-cols-4 grid-cols-2 gap-10 ">      {projects.map((project, index) => (
         <div key={index} className="group">
          <div className={` my-4 p-4 inline-flex justify-between transition-bg duration-100 cursor-pointer   border-[1px] border-gray-500 rounded md:w-[80%] w-[140px] h-[100%] ${theme ? 'bg-[#282828]':'bg-gray-100 shadow-lg'} `}>

@@ -4,10 +4,10 @@ import Calendar from "react-calendar";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
 interface projectId {
-  projectId: string | undefined;
+  id: string | undefined;
 }
 
-const AddProjectTask = ({ projectId }: projectId) => {
+const AddProjectTask = ({ id }: projectId) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState<Date>(new Date());
@@ -24,11 +24,9 @@ const[loading,setLoading]=useState<boolean>(false)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 setLoading(true)
-    // Clear previous errors
     setTitleError(null);
     setDescriptionError(null);
 
-    // Check for empty fields
     if (!title) {
       setTitleError("Title is required");
       return;
@@ -44,10 +42,10 @@ setLoading(true)
       date: date,
       description: description,
     };
-
+const userId=localStorage.getItem('accessToken')
     try {
       await axios.post(
-        `https://web-api-db7z.onrender.com/api/projectTask/${projectId}`,
+        `http://localhost:5000/api/projectTask/${userId}/${id}`,
         projectTask
       );
     } catch (error) {

@@ -14,7 +14,7 @@ export default function Login(){
     const [password,setPassword]=useState<string>('')
     const[information,setInformation]=useState<string>('')
 
-    
+  // const[tokendata,setTokendata]=useState<string>('')  
 //    const[loading,setLoading]=useState<boolean>(false)
     const navigate=useNavigate()
     const  formData:FormData={
@@ -25,37 +25,40 @@ export default function Login(){
     const [loading, setLoading] = useState<boolean>(false);
 
   
-//
+
     
 const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-  
-    try {
-      const result = await axios.post('https://web-api-db7z.onrender.com/api/login', formData);
-      const data = result.data;
-  
-      setInformation(result.data.message);
-  
-      if (data.success) {
-        const authenticationValue = true;
-        localStorage.setItem('authentication', JSON.stringify(authenticationValue));
-      }
-  
-      console.log(data);
-  
-      navigate('/dashboard');
-      console.log('success');
-    } catch (err) {
-      console.log(err);
-      setInformation('Wrong credentials');
-  
-      const authenticationValue = false;
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const result = await axios.post('http://localhost:5000/api/login', formData);
+    const data = result.data;
+
+    setInformation(data.message);
+
+    if (data.success) {
+      const authenticationValue = true;
       localStorage.setItem('authentication', JSON.stringify(authenticationValue));
-    } finally {
-      setLoading(false);
+
+      
+      localStorage.setItem('accessToken', data.id);
     }
-  };
+
+    navigate('/dashboard');
+    console.log('success');
+  } catch (err) {
+    console.log(err);
+    setInformation('Wrong credentials');
+
+    const authenticationValue = false;
+    localStorage.setItem('authentication', JSON.stringify(authenticationValue));
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   
     return (
         <div className='flex md:flex-row-reverse flex-col gap-20 justify-center items-center  '>

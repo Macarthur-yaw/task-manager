@@ -65,9 +65,13 @@ setAddprojects(true)
 
  async function getProjects(){
 try {
- const getData= await axios.get('https://web-api-db7z.onrender.com/api/projects')
-setProjects(getData.data)
-// console.log(getData.data);
+const id=localStorage.getItem('accessToken')
+  const getData= await axios.get(`http://localhost:5000/api/projects/${id}`)
+if(getData.data.data){
+  setProjects(getData.data.data)
+
+}
+// console.log(getData);
 // console.log(projects);
 // console.log(getData.data.data)
 
@@ -303,7 +307,7 @@ console.log(projects)
                       <FaUserAlt />
                     </span>
                     <div className=" flex flex-row items-center gap-1">
-                      <h1 className="text-[0.8rem] ">Kevin</h1>
+                      <h1 className="text-[0.8rem] ">Hello</h1>
                       <span className="text-[12px]" onClick={handleDropdown}>
                         {" "}
                         <FaAngleDown />
@@ -382,17 +386,22 @@ console.log(projects)
                 </li>
               </ul>
 
-              <span
-                className={`mt-10 text-sm ${
-                  theme ? "text-white" : "text-gray-600"
-                }  w-full`}
-              >
-                Projects
-                <div className="flex flex-col gap-2 mt-4 rounded w-full">
+              <span className="flex flex-col cursor-pointer justify-between items-center mt-10  text-sm  w-full">
+<div className="flex flex-row justify-between cursor-pointer  w-full ">
+          <span
+            className={`{theme ? 'text-white':'text-gray-600'}`}
+          >
+            Projects
+
+          </span>
+<span className="" onClick={addProjects}>            <AddIcon/>
+</span>
+</div>
+<div className="flex flex-col gap-2 mt-4 rounded w-full">
 {
   projects.map((content)=>{
     return(
-      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row gap-4 justify-between cursor-pointer  w-full p-2">
+      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >
@@ -404,8 +413,8 @@ console.log(projects)
   )
 })}
   </div>
+          </span>
 
-              </span>
             </nav>
           </motion.div>
         )}
