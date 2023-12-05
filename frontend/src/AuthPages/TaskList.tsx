@@ -40,7 +40,7 @@ useEffect(() => {
 const userId=localStorage.getItem('accessToken')
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/tasks/${userId}`);
+      const response = await axios.get(`https://web-api-db7z.onrender.com/api/tasks/${userId}`);
       setData(response.data.data);
     } catch (error) {
         console.log(error);
@@ -52,7 +52,7 @@ const userId=localStorage.getItem('accessToken')
   const handleDelete= async (id: string)=> {
  setLoading(true)
     try {
-   await axios.delete(`http://localhost:5000/api/tasks/${userId}/${id}`)
+   await axios.delete(`https://web-api-db7z.onrender.com/api/tasks/${userId}/${id}`)
 }
       catch(error){
 console.log(error);
@@ -75,7 +75,7 @@ console.log(error);
   }
   const ChangeInProgress=async(id:string)=>{
 try {
-  axios.put(`http://localhost:5000/api/tasks/${userId}/${id}`,{
+  axios.put(`https://web-api-db7z.onrender.com/api/tasks/${userId}/${id}`,{
     status:"in_progress"
   })
     
@@ -103,7 +103,7 @@ setDone(true)
   }
   const handleCheck=async(id:string)=>{
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${id}`,{
+      await axios.put(`https://web-api-db7z.onrender.com/api/tasks/${id}`,{
         status:"completed"
       })
     } catch (error) {

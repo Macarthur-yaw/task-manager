@@ -22,7 +22,8 @@ const AddProjects = ({ display }: PropTypes) => {
   const [titleError, setTitleError] = useState<string | null>(null);
   const [calendar, setCalendar] = useState<boolean>(false);
 const[loading,setLoading]=useState<boolean>(false)
-  useEffect(() => {
+const[addprojects,setAddprojects]=useState<boolean>(true) 
+useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     setTheme(storedTheme);
   }, [formData]);
@@ -46,7 +47,7 @@ setLoading(true)
 const id=localStorage.getItem('accessToken')
     try {
       await axios.post(
-        `http://localhost:5000/api/projects/${id}`,
+        `https://web-api-db7z.onrender.com/api/projects/${id}`,
         formdata
       );
     } catch (error) {
@@ -62,10 +63,16 @@ const id=localStorage.getItem('accessToken')
   }
 
   return (
-    <div className="">
+    <div onClick={()=>setAddprojects(false)}
+    className={`${
+      addprojects
+        ? "top-0 left-0  bg-black bg-opacity-40  fixed w-full h-screen"
+        : ""}`}>
 {loading && <div className="animate-progress-line absolute top-0 " />}
 
-      <div onClick={handleClick} className={`${display && 'flex flex-col gap-6'} ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} md:w-[400px]  w-[80%] absolute z-20 left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-md `}>
+      <div onClick={handleClick} className={`${display && 'flex flex-col gap-6'}
+      ${addprojects  ? 'hidden':"block"}
+      ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} md:w-[400px]  w-[80%] absolute z-40 left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-md `}>
         <form
           onSubmit={handleSubmit}
           className="flex flex-col rounded-sm gap-2 "

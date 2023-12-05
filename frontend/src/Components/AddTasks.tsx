@@ -71,7 +71,7 @@ setLoading(true)
     
 
     try {
-      await axios.post(`http://localhost:5000/api/tasks/${userId}`, FormData);
+      await axios.post(`https://web-api-db7z.onrender.com/api/tasks/${userId}`, FormData);
     } catch (error) {
       console.log(error);
     }
@@ -85,7 +85,7 @@ setLoading(true)
     setLoading(true)
     const id=taskId;
     try {
-      await axios.put(`http://localhost:5000/api/update/${userId}/${id}`, formData);
+      await axios.put(`https://web-api-db7z.onrender.com/api/update/${userId}/${id}`, formData);
     } catch (error) {
       console.log(error);
     }finally{

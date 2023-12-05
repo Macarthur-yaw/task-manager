@@ -60,13 +60,15 @@ window.location.reload()
   };
 
   function addProjects(){
-setAddprojects(true)  
+setAddprojects(!false)  
+// setShownav(false)
   }
+  
 
  async function getProjects(){
 try {
 const id=localStorage.getItem('accessToken')
-  const getData= await axios.get(`http://localhost:5000/api/projects/${id}`)
+  const getData= await axios.get(`https://web-api-db7z.onrender.com/api/projects/${id}`)
 if(getData.data.data){
   setProjects(getData.data.data)
 
@@ -279,7 +281,8 @@ console.log(projects)
               theme
                 ? "bg-[#282828] border-[#282828] text-white"
                 : " border-[1px] bg-[#faf8f7] border-[#faf8f7]"
-            } md:hidden fixed top-0 z-10 left-0 h-screen  p-2 w-[65%]`}
+            } md:hidden fixed top-0 z-20 left-0 h-screen  p-2 pt-4 w-[65%]`}
+            onClick={(e)=>e.stopPropagation()}
           >
             {/* <div className=" flex justify-end">
   <span className="">
@@ -394,7 +397,7 @@ console.log(projects)
             Projects
 
           </span>
-<span className="" onClick={addProjects}>            <AddIcon/>
+<span className="" onClick={()=>setAddprojects(true)}>            <AddIcon/>
 </span>
 </div>
 <div className="flex flex-col gap-2 mt-4 rounded w-full">
@@ -469,7 +472,7 @@ console.log(projects)
         onClick={() => setShownav(false)}
         className={`${
           shownav
-            ? "bg-black bg-opacity-40 fixed top-0 left-0 w-full h-screen"
+            ? "bg-black bg-opacity-40 fixed top-0 left-0 z-0 w-full h-screen"
             : ""
         }`}
       ></div>
@@ -477,14 +480,7 @@ console.log(projects)
 
       <div>
         {addprojects && (
-          <div
-            onClick={() => setAddprojects(false)}
-            className={`${
-              addprojects
-                ? "top-0 left-0  bg-black bg-opacity-30 fixed w-full h-screen"
-                : ""
-            }`}
-          >
+          <div onClick={()=>setShownav(false)}>
             <AddProjects/>
           </div>
         )}

@@ -47,7 +47,7 @@ useEffect(() => {
        
 
    
-      const response = await axios.get(`http://localhost:5000/api/tasks/${id}`);
+      const response = await axios.get(`https://web-api-db7z.onrender.com/api/tasks/${id}`);
   if(response.data.data){
     setTasks(response.data.data);
     countTasks(response.data.data);

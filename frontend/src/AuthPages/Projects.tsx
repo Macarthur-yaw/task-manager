@@ -33,7 +33,7 @@ const[loading,setLoading]=useState<boolean>(false)
         // setLoading(true)
         const userId=localStorage.getItem('accessToken')
       
-        const getData = await axios.get(`http://localhost:5000/api/projects/${userId}/${id}`);
+        const getData = await axios.get(`https://web-api-db7z.onrender.com/api/projects/${userId}/${id}`);
       // console.log(getData)
         if (getData.data.data.length > 0) {
           setProjects(getData.data.data);
