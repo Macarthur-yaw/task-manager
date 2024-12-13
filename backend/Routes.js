@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { users, tasks, project } = require('./Model');
-const bcrypt = require('bcrypt');
+const { users, tasks, project } = require('./Models/Model');
+
 const jwt = require('jsonwebtoken');
-const tokenSecretKey = process.env.JWT_SECRET_KEY || 'default_secret_key';
+
 
 function authMiddleware(req, res, next) {
   const userId = req.params.userId;
@@ -16,54 +16,8 @@ function authMiddleware(req, res, next) {
   next();
 }
 
-router.post('/signup', async (req, res) => {
-  const { email, password } = req.body;
 
-  try {
-    const existingUser = await users.findOne({ Email: email });
 
-    if (existingUser) {
-      return res.status(400).send({ success: false, message: 'User already exists' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new users({
-      Email: email,
-      Password: hashedPassword,
-    });
-
-    await user.save();
-    res.status(200).send({ success: true, message: 'User registered successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-});
-
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await users.findOne({ Email: email });
-
-    if (!user) {
-      return res.status(400).send({ success: false, message: 'User not found' });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.Password);
-
-    if (isPasswordValid) {
-      const token = jwt.sign({ userId: user._id, email: user.Email }, tokenSecretKey, { expiresIn: '1h' });
-      res.status(200).send({ success: true, token: token, id: user._id });
-    } else {
-      res.status(401).send({ success: false, message: 'Invalid password' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ success: false, message: 'Internal Server Error' });
-  }
-});
 
 router.post('/tasks/:userId', authMiddleware, async (req, res) => {
   try {
