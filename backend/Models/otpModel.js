@@ -18,6 +18,6 @@ const otpSchema=new Schema(
         }
     }
 )
-const otpmodel=model("otpSchema",otpSchema)
+const otpmodel=model("Otp",otpSchema)
 
 module.exports=otpmodel;
