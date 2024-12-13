@@ -27,6 +27,7 @@ const Signuprouter=router.post('/signup', async (req, res) => {
 
       await user.save();
       await saveOtp(email,otpNumber);
+     
       await sendEmail(email,otpNumber)
   
       

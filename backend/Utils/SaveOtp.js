@@ -2,9 +2,7 @@
 const otpmodel = require("../Models/otpModel")
 
 const saveOtp=async(email,otp)=>{
-
-
-    try {
+ try {
       
 
         const otpUser=new otpmodel(
@@ -14,8 +12,8 @@ const saveOtp=async(email,otp)=>{
             }
         )
 
-      await   otpUser.save();
-
+     const response= await   otpUser.save();
+return response;
     } catch (error) {
         console.log(error)
     }
