@@ -9,7 +9,7 @@ const loginRouter=router.post('/login', async (req, res) => {
     const { email, password } = req.body;
   
     if(email === " " || password === " "){
-      res.status(400).send({message:"The request body must be filled"});
+     return  res.status(400).send({message:"The request body must be filled"});
     }
     else{
       try {
