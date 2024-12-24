@@ -70,7 +70,7 @@ const Navbar = () => {
     setTheme((prevTheme:boolean) => !prevTheme);
 window.location.reload()
   };
-  // console.log(theme);
+  
 
   const navigate = useNavigate();
   const handleDropdown = () => {
@@ -101,9 +101,7 @@ if(getData.data.data){
   setProjects(getData.data.data)
 
 }
-// console.log(getData);
-// console.log(projects);
-// console.log(getData.data.data)
+
 
 } catch (error) {
   console.log(error)
@@ -509,7 +507,7 @@ console.log(projects)
       <div>
         {addprojects && (
           <div onClick={()=>setShownav(false)}>
-            <AddProjects/>
+            <AddProjects addProjects={addprojects}/>
           </div>
         )}
       </div>

@@ -101,8 +101,8 @@ const onsubmit = async (data:Formdata) => {
     <img src={bgPic} alt="bg" className="object-cover "/>
 </div>
 
-<div className='w-[80%] lg:w-[40%] pt-[2%] h-screen lg:h-full flex flex-col justify-around items-center'>
-<form onSubmit={handleSubmit(onsubmit)} className="flex flex-col justify-center    w-[100%]  p-8  ">
+<div className='w-[90%] lg:w-[40%] pt-[2%] md:h-screen h-[90vh]  lg:h-full flex flex-col justify-around items-center'>
+<form onSubmit={handleSubmit(onsubmit)} className="flex flex-col justify-center    w-[100%]  lg:p-8  ">
 <span>
     <h1 className="text-3xl font-semibold mb-10 ">Log in to get started</h1>
 </span>

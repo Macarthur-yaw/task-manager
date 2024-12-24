@@ -11,9 +11,10 @@ interface InitialState {
 
 interface PropTypes {
   display?: boolean;
+  addProjects?:boolean
 }
 
-const AddProjects = ({ display }: PropTypes) => {
+const AddProjects = ({ display,addProjects }: PropTypes) => {
   const [formData, setFormData] = useState<InitialState>({
     title: "",
   });
@@ -22,7 +23,7 @@ const AddProjects = ({ display }: PropTypes) => {
   const [titleError, setTitleError] = useState<string | null>(null);
   const [calendar, setCalendar] = useState<boolean>(false);
 const[loading,setLoading]=useState<boolean>(false)
-const[addprojects,setAddprojects]=useState<boolean>(true) 
+
 useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     setTheme(storedTheme);
@@ -63,15 +64,15 @@ const id=localStorage.getItem('accessToken')
   }
 
   return (
-    <div onClick={()=>setAddprojects(false)}
+    <div 
     className={`${
-      addprojects
-        ? "top-0 left-0  bg-black bg-opacity-40  fixed w-full h-screen"
+      addProjects
+        ? "top-0 left-0 z-50 bg-black bg-opacity-40  fixed w-full h-screen"
         : ""}`}>
 {loading && <div className="animate-progress-line absolute top-0 " />}
 
       <div onClick={handleClick} className={`${display && 'flex flex-col gap-6'}
-      ${addprojects  ? 'hidden':"block"}
+      ${addProjects  ? 'block':"hidden"}
       ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} md:w-[400px]  w-[80%] absolute z-40 left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-md `}>
         <form
           onSubmit={handleSubmit}

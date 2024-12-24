@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
-import Calendar from "react-calendar";
-import 'react-calendar/dist/Calendar.css';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
 interface InitialState {
   title?: string;
@@ -129,23 +132,16 @@ setLoading(true)
               className={`p-2 text-sm outline-none ${theme === 'dark' ? 'text-white' : 'text-black'}`}
             />
 
-            <span className="mb-2 px-2">           
-              <span onClick={() => setShow(!show)} className="w-[32%] justify-center items-center gap-4 border-[1px] inline-flex rounded-md text-[15px]">
-                <CalendarTodayOutlinedIcon style={{ fontSize: '14px' }} />
-                Due Date 
+            <span className="mb-1 px-1">           
+            
                 <div className="">
-                  {
-                    show && (
-                      <div className="absolute top-[100%] left-6 ">
-                        <Calendar
-                          value={date}
-                          onChange={(newdate) => setDate(newdate as Date)}
-                        />
+                       <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['DateTimePicker']}>
+      <DateTimePicker label="Choose deadline of tasks" />
+      </DemoContainer>
+    </LocalizationProvider>
                       </div>
-                    )
-                  }
-                </div>
-              </span>
+                
             </span>
 
           </span>
