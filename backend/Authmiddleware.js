@@ -10,28 +10,18 @@ async function authMiddleware  (req, res, next) {
   const accessToken=splitToken[1]
   
    
-  const {providerType}=req.body
-  if(!providerType){
-    return res.status(400).send({message:"provider type must be specified"})
-  }
-if(providerType==="google"){
-  try {
-
-    const response=await fetch( `https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`)
-    const changeResponse=await response.json()
-    
-    req.body.email=changeResponse.email
-  return next();
-
-} catch (error) {
-    console.log(error)
-}
-} else{
 
   try {
     const decoded = jwt.verify(accessToken, tokenSecretKey);
-    
-    req.body.userId = decoded.userId;
+    if(decoded){
+      if(decoded.userId){
+        req.body.userId=decoded.userId
+      }
+      else{
+        req.body.username=decoded.username
+      }
+    }
+   
     
     next();
   } catch (error) {
@@ -41,6 +31,5 @@ if(providerType==="google"){
  
 
  
-}
 
 module.exports = authMiddleware;

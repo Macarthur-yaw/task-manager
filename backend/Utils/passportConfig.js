@@ -9,7 +9,7 @@ passport.use(new googleStrategy({
     callbackURL: "http://localhost:8086/api/auth/google/callback", 
   },
   (accessToken, refreshToken, profile, done) => {
-   console.log(accessToken)
+ 
    const user={Profile:profile,Accesstoken:accessToken}
     return done(null, user);
   }

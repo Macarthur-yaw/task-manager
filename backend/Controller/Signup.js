@@ -3,10 +3,9 @@ const router=express.Router()
 const {users}=require("../Models/Model")
 const bcrypt = require('bcrypt');
 const sendEmail = require("../Utils/EmailSender")
-const saveOtp = require("../Utils/SaveOtp")
-const otpGenerator=require("otp-generator")
-const otpNumber=otpGenerator.generate(6,{upperCaseAlphabets:false,lowerCaseAlphabets:false,specialChars:false})
-
+const saveOtp = require("../Utils/SaveOtp");
+const returnOtp = require("../Utils/OtpGenerator");
+const otpNumber=returnOtp()
 const Signuprouter=router.post('/signup', async (req, res) => {
     const {username, email, password } = req.body;
   
@@ -28,7 +27,7 @@ const Signuprouter=router.post('/signup', async (req, res) => {
       await user.save();
       await saveOtp(email,otpNumber);
      
-      await sendEmail(email,otpNumber)
+      await sendEmail(email,otpNumber,"null")
   
       
       res.status(200).send({ success: true, message: 'An otp has been sent to the account' });

@@ -16,7 +16,7 @@ const loginRouter=router.post('/login', async (req, res) => {
         const user = await users.findOne({ Email: email });
     
         if (!user) {
-          return res.status(400).send({ success: false, message: 'User not found' });
+          return res.status(400).send({ success: false, message: 'User does not exists' });
         }
     
         const isPasswordValid = await bcrypt.compare(password, user.Password);

@@ -7,11 +7,11 @@ const router=require("express").Router()
 const userDetails=router.get("/user",authMiddleware,async (req,res)=>
 {
 
-    const{userId,email}=req.body;
+    const{userId,username}=req.body;
 let findUser;
 try {
-    if(email){
-         findUser=await users.findOne({Email:email})
+    if(username){
+         findUser=await users.findOne({Username:username})
 
       
     } else{
