@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
 interface InitialState {
@@ -24,8 +24,7 @@ const AddTasks = ({ taskId, display, handleCallback, inputContent }: PropTypes) 
     title: "",
     description: "",
   });
-  const [show, setShow] = useState<boolean>(false);
-  const [date, setDate] = useState<Date>(new Date());
+ 
   const [theme, setTheme] = useState<string | null>(null);
   const [titleError, setTitleError] = useState<string | null>(null);
 const[loading,setLoading]=useState<boolean>(false)
@@ -68,7 +67,6 @@ setLoading(true)
     const FormData = {
       title: formData.title,
       description: formData.description,
-      dueDate: date.toString().slice(4, 15),
     };
     // const getItem=localStorage.getItem('accesstoken')
     
