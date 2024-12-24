@@ -17,6 +17,7 @@ import WbSunnyOutlined from "@mui/icons-material/WbSunnyOutlined";
 import { useEffect } from "react";
 import AddProjects from "./AddProjects";
 import axios from "axios";
+import { useAuthenticated } from "../hooks/useAuthenticated";
 interface projectsTask{
   _id:string,
   Title:string,
@@ -35,9 +36,34 @@ const Navbar = () => {
   const [shownav, setShownav] = useState(false);
   const[addprojects,setAddprojects]=useState<boolean>(false)
   const[projects,setProjects]=useState<projectsTask[]>([])
+  const[name,setName]=useState("")
   useEffect(() => {
     localStorage.setItem('theme', JSON.stringify(theme));
     getProjects()
+
+    const{tokens}=useAuthenticated()
+    const fetchUserDetails=async()=>{
+      try {
+      const response=  await fetch("http://localhost:8086/api/user",
+        {
+          method:"GET",
+          headers: {
+            "Authorization": `Bearer ${tokens}`,
+            "Content-Type": "application/json",  
+          },
+        }
+      )
+      const data =await response.json()
+      if(data){
+        setName(data.message.username)
+      }
+      console.log(data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchUserDetails()
   }, [theme]);
 
   const changeDisplay = () => {
@@ -54,7 +80,7 @@ window.location.reload()
     setSettings(true);
   };
   const handleLogout = () => {
-    localStorage.setItem("authentication", JSON.stringify(false));
+    localStorage.clear();
 
     navigate("/");
   };
@@ -63,6 +89,8 @@ window.location.reload()
 setAddprojects(!false)  
 // setShownav(false)
   }
+  
+
   
 
  async function getProjects(){
@@ -114,7 +142,7 @@ console.log(projects)
                   <FaUserAlt />
                 </span>
                 <div className=" flex flex-row items-center gap-1">
-                  <h1 className="text-[0.8rem] ">Hello</h1>
+                  <h1 className="text-[0.8rem] ">Hello, {name}</h1>
                   <span className="text-[12px]" onClick={handleDropdown}>
                     {" "}
                     <FaAngleDown />

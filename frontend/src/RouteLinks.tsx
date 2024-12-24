@@ -5,12 +5,14 @@ import {Dashboard} from './AuthPages/Dashboard';
 import Tasks from './AuthPages/Tasks';
 import Projects from './AuthPages/Projects';
 import TaskList from './AuthPages/TaskList';
+import OTPVerification from './UserPage/OtpVerify';
 const RouteLinks = () => {
     return ( 
         <div>
             <Routes>
                 <Route path="/signup" element={<SignUp/>}/>
                 <Route index element={<Login/>}/>
+                <Route path='/otp' element={<OTPVerification/>}/>
             <Route path="*" element={<h1>404</h1>}/>
 <Route path='/dashboard' element={<Dashboard/>}>
     <Route index element={<Tasks/>}/>
