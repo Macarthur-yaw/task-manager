@@ -7,6 +7,7 @@ import { useFetch } from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
 import { CircularProgress } from '@mui/material'
 import { Google } from '@mui/icons-material'
+import api_url from '../BaseUrl'
 
 export type Formdata={
     email:string,
@@ -29,7 +30,7 @@ export default function Login(){
 try {
   
 
-  window.location.href = 'http://localhost:8086/api/auth/google';
+  window.location.href = `https://task-9u4e.onrender.com/api/auth/google`;
 
   
 } catch (error) {
