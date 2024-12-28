@@ -15,9 +15,10 @@ import Add from "@mui/icons-material/Add";
 import WbSunnyOutlined from "@mui/icons-material/WbSunnyOutlined";
 import { useEffect } from "react";
 import AddProjects from "./AddProjects";
-import axios from "axios";
+
 import { useAuthenticated } from "../hooks/useAuthenticated";
 import Settings from "./Settings";
+import api_url from "../BaseUrl";
 
 interface projectsTask{
   _id:string,
@@ -40,12 +41,12 @@ const Navbar = () => {
   const[name,setName]=useState("")
   useEffect(() => {
     localStorage.setItem('theme', JSON.stringify(theme));
-    getProjects()
+ 
 
     const{tokens}=useAuthenticated()
     const fetchUserDetails=async()=>{
       try {
-      const response=  await fetch("http://localhost:8086/api/user",
+      const response=  await fetch("http://localhost:8086/api/userdetails",
         {
           method:"GET",
           headers: {
@@ -73,34 +74,54 @@ window.location.reload()
   };
   
 
+  useEffect(
+    () => {
+      async function getProjects(){
+        try {
+        const id=localStorage.getItem('accessToken')
+        let results: string = "";
+        if(id){
+        results=JSON.parse(id)
+        }
+          const getData= await fetch(`${api_url}/projects`,
+          {
+            headers:{
+              "Authorization":`Bearer ${results}`
+            }
+          })
+          const data=await getData.json()
+         console.log(data);
+         if(data)
+         {
+          setProjects(data.data)
+         }
+         
+        
+        
+        } catch (error) {
+          console.log(error)
+          
+        }
+          }
+    
+      getProjects()
+    }, []
+  )
+
   
  
- 
-
   function addProjects(){
-setAddprojects(!false)  
-// setShownav(false)
-  }
+    setAddprojects(!false)  
+    // setShownav(false)
+      }
+
+  
   
 
   
 
- async function getProjects(){
-try {
-const id=localStorage.getItem('accessToken')
-  const getData= await axios.get(`https://web-api-db7z.onrender.com/api/projects/${id}`)
-if(getData.data.data){
-  setProjects(getData.data.data)
+ 
 
-}
-
-
-} catch (error) {
-  console.log(error)
-  
-}
-  }
-console.log(projects)
 
 
 

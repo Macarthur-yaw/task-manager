@@ -5,6 +5,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import AddTasks from "../Components/AddTasks";
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
+import api_url from "../BaseUrl";
 interface Task {
   _id: string;
   Title: string;
@@ -36,12 +37,29 @@ useEffect(() => {
   const storedTheme = localStorage.getItem('theme');
 
   setTheme(storedTheme ? JSON.parse(storedTheme) : false)
-  }, [data]);
-const userId=localStorage.getItem('accessToken')
+  }, []);
+
+  const userId=localStorage.getItem('accessToken')
+  let results: string = "";
+  if(userId){
+    results=JSON.parse(userId)
+  }
+
   const fetchData = async () => {
+   
     try {
-      const response = await axios.get(`https://web-api-db7z.onrender.com/api/tasks/${userId}`);
-      setData(response.data.data);
+      const response = await fetch(`${api_url}/tasks`,
+      {
+        headers:{
+          
+          'Authorization':`Bearer ${results}`
+        }
+      }
+      );
+const changeData=await response.json()
+setData(changeData.data)
+    
+   console.log(changeData)
     } catch (error) {
         console.log(error);
     } finally {
