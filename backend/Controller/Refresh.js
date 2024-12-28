@@ -41,26 +41,52 @@ const jwt = require("jsonwebtoken");
 refreshRouter.post('/refresh', async (req, res) => {
     try {
         const { refreshToken } = req.body;
-
+console.log(req.body)
         if (!refreshToken) {
             return res.status(400).send({ success: false, message: 'Refresh token is required' });
         }
 
         let decoded;
         try {
-            decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY);
+            decoded = jwt.verify(refreshToken, process.env.MY_SECRET_KEY);
         } catch (err) {
             return res.status(400).send({ success: false, message: 'Invalid or expired refresh token' });
         }
 
-        // Verify the user and token validity (add database lookup if applicable)
-        // Example: Check if the token is in a whitelist or not revoked
-
-        const accessToken = jwt.sign(
-            { userId: decoded.userId, username: decoded.username },
-            process.env.ACCESS_SECRET_KEY,
-            { expiresIn: '1h' }
-        );
+       
+        if(decoded.email){
+            const accessToken = jwt.sign(
+                { email: decoded.email },
+                process.env.MY_SECRET_KEY,
+                { expiresIn: '24h' }
+            );
+            const refreshToken = jwt.sign(
+                { email: decoded.email },
+                process.env.MY_SECRET_KEY,
+                { expiresIn: '30d' }
+            );
+            return res.status(200).send({
+                success: true,
+               accessToken: accessToken,
+                refreshToken: refreshToken,
+        });}else{
+            const accessToken = jwt.sign(
+                { userId: decoded.userId, username: decoded.username },
+                process.env.MY_SECRET_KEY,
+                { expiresIn: '24h' }
+            );
+            const refreshToken = jwt.sign(
+                { userId: decoded.userId, username: decoded.username },
+                process.env.MY_SECRET_KEY,
+                { expiresIn: '30d' }
+            );
+            res.status(200).send({
+                success: true,
+                accessToken:accessToken,
+                refreshToken: refreshToken,
+            });
+        }
+       
 
         res.status(200).send({
             success: true,

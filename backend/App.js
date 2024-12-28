@@ -41,7 +41,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-const swaggerDocs = require("./SwaggerConfig")
+const swaggerDocs = require("./SwaggerConfig");
+const refreshRouter = require('./Controller/Refresh');
 app.use("/api-docs", swaggerui.serve, swaggerui.setup(swaggerDocs));
 
 
@@ -51,7 +52,7 @@ app.use('/api', otpRouter);
 app.use('/api', Signuprouter);
 app.use("/api", googleRouter);
 app.use("/api", userDetails);
-
+app.use("/api",refreshRouter)
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

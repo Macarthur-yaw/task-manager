@@ -1,3 +1,4 @@
+const AuthMiddleware = require("../Authmiddleware");
 const authMiddleware = require("../Authmiddleware");
 const { users } = require("../Models/Model");
 
@@ -56,12 +57,12 @@ const router = require("express").Router();
  *       scheme: bearer
  *       bearerFormat: JWT
  */
-const userDetails = router.get("/userdetails", authMiddleware, async (req, res) => {
-  const { userId, username } = req.body;
+const userDetails = router.get("/userdetails", AuthMiddleware, async (req, res) => {
+  const { userId, email } = req.body;
   let findUser;
   try {
-    if (username) {
-      findUser = await users.findOne({ Username: username });
+    if (email) {
+      findUser = await users.findOne({ Email: email });
     } else {
       findUser = await users.findById(userId);
     }

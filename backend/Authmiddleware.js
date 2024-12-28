@@ -1,24 +1,30 @@
 const jwt = require('jsonwebtoken');
-const tokenSecretKey = process.env.MY_SECRET_KEY || 'default_secret_key';
+require('dotenv').config();
+const tokenSecretKey = process.env.MY_SECRET_KEY ;
 
-async function authMiddleware  (req, res, next) {
+async function AuthMiddleware  (req, res, next) {
   const token = req.header('Authorization');
   if (!token) {
     return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
   }
   const splitToken =token.split(" ")
   const accessToken=splitToken[1]
-  
+  console.log(accessToken)
    
-
+console.log(tokenSecretKey)
   try {
-    const decoded = jwt.verify(accessToken, tokenSecretKey);
+    let decoded;
+    if(tokenSecretKey){
+     decoded = jwt.verify(accessToken, tokenSecretKey);
+     console.log(decoded)
+    }
+  
     if(decoded){
       if(decoded.userId){
         req.body.userId=decoded.userId
       }
       else{
-        req.body.username=decoded.username
+        req.body.email=decoded.email
       }
     }
    
@@ -32,4 +38,4 @@ async function authMiddleware  (req, res, next) {
 
  
 
-module.exports = authMiddleware;
+module.exports = AuthMiddleware;

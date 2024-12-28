@@ -23,9 +23,17 @@ googleRouter.get("/auth/google/callback",
 
  try {
  
-    const checkIfUserExists=await users.find({Email:email})
-    if(checkIfUserExists.length>0){
-        return res.status(500).send({message:"User already exists"})
+    const checkIfUserExists=await users.findOne({Email:email})
+    if(checkIfUserExists){
+        const accessToken = jwt.sign({  email: checkIfUserExists.Email }, MY_SECRET_KEY, { expiresIn: '24h' });
+        const refreshToken=jwt.sign({email:checkIfUserExists.Email},MY_SECRET_KEY ,{expiresIn:'30d'})
+       
+        
+       
+       res.redirect(`${FRONTEND_URL}?accessToken=${accessToken}&refreshToken=${refreshToken}`)
+       
+    return;
+
     }
     const newUser=new users({
         Username:username,
@@ -33,19 +41,19 @@ googleRouter.get("/auth/google/callback",
         Password:null
     })
     await newUser.save();
-
+    const accessToken = jwt.sign({  email: email }, MY_SECRET_KEY, { expiresIn: '24h' });
+    const refreshToken=jwt.sign({email:email},MY_SECRET_KEY ,{expiresIn:'30d'})
+   
+    
+   
+   res.redirect(`${FRONTEND_URL}?accessToken=${accessToken}&refreshToken=${refreshToken}`)
+   
  } catch (error) {
    
    return  res.status(500).send({message:"Internal sever error"})
  }
 
- const accessToken = jwt.sign({  username: username }, MY_SECRET_KEY, { expiresIn: '1h' });
- const refreshToken=jwt.sign({username:username},MY_SECRET_KEY ,{expiresIn:'24h'})
-
  
-
-res.redirect(`${FRONTEND_URL}?accessToken=${accessToken}&refreshToken=${refreshToken}`)
-
 
 
 

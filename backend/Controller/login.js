@@ -73,12 +73,12 @@ router.post("/login", async (req, res) => {
       const accessToken = jwt.sign(
         { userId: user._id, username: user.Username },
         MY_SECRET_KEY,
-        { expiresIn: "1h" }
+        { expiresIn: "24h"}
       );
       const refreshToken = jwt.sign(
         { userId: user._id, username: user.Username },
         MY_SECRET_KEY,
-        { expiresIn: "24h" }
+        { expiresIn: "30d" }
       );
       res.status(200).send({ success: true, Accesstoken: accessToken, RefreshToken: refreshToken });
     } else {
