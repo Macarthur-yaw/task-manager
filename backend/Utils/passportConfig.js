@@ -2,11 +2,16 @@ const passport=require("passport")
 const googleStrategy=require("passport-google-oauth2").Strategy
 require("dotenv").config(
 )
+const {BAKCEND_URL}=process.env
+if(BAKCEND_URL){
 
+
+    throw new Error("Please provide frontend url")
+}
 passport.use(new googleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "http://localhost:8086/api/auth/google/callback", 
+    callbackURL: `${BAKCEND_URL}/google/callback`,
   },
   (accessToken, refreshToken, profile, done) => {
  
