@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import axios from "axios";
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddIcon from '@mui/icons-material/Add';
-// import DeleteIcon from '@mui/icons-material/Delete';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import AddProjectTask from "../Components/AddProjectTask";
-// import EditOutlined from "@mui/icons-material/EditOutlined";
+import api_url from "../BaseUrl";
 
 interface Project {
   _id: string;
@@ -15,96 +15,118 @@ interface Project {
 
 const Projects = () => {
   const { id } = useParams();
-  // console.log(id);
-
   const [add, setAdd] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [theme, setTheme] = useState<boolean>(false);
-const[menu,setMenu]=useState<boolean>(false)
-const[loading,setLoading]=useState<boolean>(false)
+  const [menu, setMenu] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     const theme = localStorage.getItem('theme');
     setTheme(theme ? JSON.parse(theme) : false);
     AddTasks();
 
     async function AddTasks() {
-
       try {
-        // setLoading(true)
-        const userId=localStorage.getItem('accessToken')
-      
-        const getData = await axios.get(`https://web-api-db7z.onrender.com/api/projects/${userId}/${id}`);
-      // console.log(getData)
-        if (getData.data.data.length > 0) {
-          setProjects(getData.data.data);
-          // console.log(getData.data.data)
+        const userId = localStorage.getItem('accessToken');
+        let results;
+        if (userId) {
+          results = JSON.parse(userId);
+        }
+        const getData = await fetch(`${api_url}/projectTask/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${results}`
+          }
+        });
+        const changeResponse = await getData.json();
+        if (changeResponse.data) {
+          setProjects(changeResponse.data);
         }
       } catch (error) {
         console.log(error);
-      }
-      finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     }
-  }, [id, theme,projects]);
+  }, [id, theme]);
 
-  
-
-  // const handleDelete = async (projectId: string) => {
-  //   try {
-  //     await axios.delete(`https://web-api-db7z.onrender.com/api/projectTask/${projectId}`);
-      
-  //     // Update the projects state after deletion
-  //     const updatedProjects = projects.filter(project => project._id !== projectId);
-  //     setProjects(updatedProjects);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  // Mock data for demonstration
+  const today = new Date().toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
 
   return (
-    <div className={`${theme ? 'bg-[#1e1e1e]' : ''} px-6 pt-8 min-h-screen`}>
-  {loading && <div className="animate-progress-line absolute top-0 " />}
+    <div className={`max-w-4xl mx-auto ${theme ? 'bg-gray-900 text-white' : 'bg-white'} p-6`}>
+      {loading && <div className="h-1 bg-blue-500 absolute top-0 left-0 animate-pulse w-full" />}
 
-
-
-      <span className="flex p-4 flex-row py-2 justify-between">
-        <h1 className="text-[16px] font-medium">Projects</h1>
-        <MoreHorizOutlinedIcon className="text-[20px]" />
-      </span>
-      <span className="px-4">
-        <button onClick={() => setAdd(!add)} className={`inline-flex  ${theme ? 'text-white':''} text-[14px] gap-2 items-center`}>
-          <AddIcon style={{ fontSize: "16px" }} />
-          Add Task
-        </button>
-      </span>
-      {add && <AddProjectTask id={id} />}
-<div className="grid md:grid-cols-4 grid-cols-2 gap-10 ">      {projects.map((project, index) => (
-        <div key={index} className="group">
-         <div className={` my-4 p-4 inline-flex justify-between transition-bg duration-100 cursor-pointer   border-[1px] border-gray-500 rounded md:w-[80%] w-[140px] h-[100%] ${theme ? 'bg-[#282828]':'bg-gray-100 shadow-lg'} `}>
-    <span>          <h1 className={`  ${theme ? 'text-white':''}`}>{project.title}</h1>
-          <span className="text-gray-400">{project.description}</span>
-          </span>
- <div onClick={()=>setMenu(!menu)} className=" mt-2 group-hover:block hidden">
-        <MoreHorizOutlinedIcon className="text-white"/>
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{today}</span>
+            <span className="text-red-500 text-sm bg-red-100 px-2 py-0.5 rounded">
+              Overtime Detected
+            </span>
           </div>
-      {/* <div className="relative">    {
-            menu && (
-                <div className="absolute top-10 w-[100px] flex flex-col justify-center right-0 shadow-2xl bg-white h-[60px]">
-                    <button className="text-sm inline-flex gap-1 items-center w-full justify-center">
-                        <EditOutlined style={{fontSize:'14px'}}/>
-                        Edit Task</button>
-                    <button
-                    onClick={()=>handleDelete(project._id)}
-                    className="text-sm inline-flex gap-1 items-center w-full justify-center">
-                        <DeleteIcon style={{fontSize:'14px'}}/>
-                        Delete Task</button>
-                    </div>
-            )
-          }</div> */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-600">09:00:00</span>
+              <span className="text-red-500">+30:00</span>
+            </div>
+            <span className="text-gray-600">260</span>
+            <KeyboardArrowUpIcon className="text-gray-400 w-5 h-5" />
           </div>
         </div>
-      ))}</div>
+
+        <div className="space-y-4">
+          {projects.map((project, index) => (
+            <div key={index} className={`
+              rounded-lg border ${theme ? 'border-gray-700 bg-gray-800' : 'border-gray-200 shadow-lg'}
+              p-4 transition-all duration-200 hover:border-gray-400
+            `}>
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h3 className={`font-medium ${theme ? 'text-white' : 'text-gray-900'}`}>
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-gray-500">{project.description}</p>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>08:17 AM - 09:29 AM</span>
+                    <span>01:10:00</span>
+                  </div>
+                  <span className="text-gray-600">$124.76</span>
+                  <button className="p-1 hover:bg-gray-100 rounded">
+                    <PlayCircleOutlineIcon className="text-gray-400" style={{ fontSize: "24px" }} />
+                  </button>
+                  <button 
+                    onClick={() => setMenu(!menu)} 
+                    className="p-1 hover:bg-gray-100 rounded"
+                  >
+                    <MoreHorizOutlinedIcon className="text-gray-400" style={{ fontSize: "24px" }} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {add && <AddProjectTask id={id} />}
+      <div className="mt-6">
+        <button 
+          onClick={() => setAdd(!add)} 
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg 
+            ${theme ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-700'} 
+            hover:bg-gray-200 transition-colors duration-200`}
+        >
+          <AddIcon style={{ fontSize: "20px" }} />
+          Add Task
+        </button>
+      </div>
     </div>
   );
 };

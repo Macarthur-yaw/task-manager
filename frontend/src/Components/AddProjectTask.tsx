@@ -1,120 +1,129 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import Calendar from "react-calendar";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
-interface projectId {
+import { useEffect, useState } from "react";
+
+import { useForm, SubmitHandler } from "react-hook-form";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import {Dayjs} from "dayjs";
+import api_url from "../BaseUrl";
+interface ProjectTask {
+  title: string;
+  description: string;
+  date: Date;
+}
+
+interface ProjectId {
   id: string | undefined;
 }
 
-const AddProjectTask = ({ id }: projectId) => {
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<Date>(new Date());
-  const [show, setShow] = useState<boolean>(false);
+const AddProjectTask = ({ id }: ProjectId) => {
+  console.log(id)
+  const[selectedDate,setSelectedDate]=useState<Dayjs | null>(null)
   const [theme, setTheme] = useState<boolean>(false);
-  const [titleError, setTitleError] = useState<string | null>(null);
-  const [descriptionError, setDescriptionError] = useState<string | null>(null);
-const[loading,setLoading]=useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
+  const handleDateChange = (date: Dayjs | null) => {
+    setSelectedDate(date);
+  }
+  const {
+    register,
+    handleSubmit,
+  
+    formState: { errors }
+  } = useForm<ProjectTask>({
+    defaultValues: {
+      date: new Date()
+    }
+  });
+
   useEffect(() => {
     const theme = localStorage.getItem("theme");
     setTheme(theme ? JSON.parse(theme) : false);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-setLoading(true)
-    setTitleError(null);
-    setDescriptionError(null);
-
-    if (!title) {
-      setTitleError("Title is required");
-      return;
-    }
-
-    if (!description) {
-      setDescriptionError("Description is required");
-      return;
-    }
-
-    const projectTask = {
-      title: title,
-      date: date,
-      description: description,
-    };
-const userId=localStorage.getItem('accessToken')
+  const onSubmit: SubmitHandler<ProjectTask> = async (data) => {
+    setLoading(true);
+    console.log(data)
+    const userId = localStorage.getItem('accessToken');
+    let results;
+if(userId){
+  results=JSON.parse(userId)
+}
     try {
-      await axios.post(
-        `https://web-api-db7z.onrender.com/api/projectTask/${userId}/${id}`,
-        projectTask
+    const response=  await fetch(
+        `${api_url}/projectTask`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            ...data,
+          
+            date: selectedDate?.toISOString()}),
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${results}`
+          },}
       );
+      const changeResponse=await response.json()
+      console.log(changeResponse)
     } catch (error) {
       console.log(error);
-    }
-    finally
-    {
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="mt-4 p-2">
-      {loading && <div className="animate-progress-line absolute top-0 " />}
+      {loading && <div className="animate-progress-line absolute top-0" />}
 
       <form
-        onSubmit={handleSubmit}
-        className="flex flex-col  gap-2 border-[1px] rounded-md p-1"
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-2 border-[1px] rounded-md p-1"
       >
-        <span className="flex flex-col border-b-[1px] ">
+        <span className="flex flex-col border-b-[1px]">
           <input
+            {...register("title", { 
+              required: "Title is required" 
+            })}
             type="text"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
             placeholder="Task title"
-            className={`p-2 text-md outline-none ${
-              theme ? "bg-transparent" : ""
-            }`}
+            className={`p-2 text-md outline-none ${theme ? "bg-transparent" : ""}`}
           />
-          {titleError && <p className="text-red-500">{titleError}</p>}
+          {errors.title && (
+            <p className="text-red-500">{errors.title.message}</p>
+          )}
+
           <input
+            {...register("description", { 
+              required: "Description is required" 
+            })}
             type="text"
-            name="description"
             placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className={`p-1 text-sm outline-none mb-2 ${
-              theme ? "bg-transparent" : ""
-            }`}
+            className={`p-1 text-sm outline-none mb-2 ${theme ? "bg-transparent" : ""}`}
           />
-          {descriptionError && (
-            <p className="text-red-500">{descriptionError}</p>
+          {errors.description && (
+            <p className="text-red-500">{errors.description.message}</p>
           )}
 
           <span className="mb-2">
-            <span
-              onClick={() => setShow(!show)}
-              className="md:w-[14%] justify-center items-center gap-4 border-[1px] inline-flex rounded-md text-[15px]"
-            >
-              <CalendarTodayOutlinedIcon style={{ fontSize: "14px" }} />
-              Due Date
-              <div className="relative">
-                {show && (
-                  <div className="absolute top-0 md:left-0 left-0 ">
-                    <Calendar
-                      value={date}
-                      onChange={(date) => setDate(date as Date)}
-                      className=""
-                    />
-                  </div>
-                )}
-              </div>
-            </span>
+          <div className="mb-1 px-1">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={['DateTimePicker']}>
+                  <DateTimePicker
+                    label="Choose deadline of tasks"
+                value={selectedDate}
+                onChange={handleDateChange} 
+                 />
+                </DemoContainer>
+              </LocalizationProvider>
+              {errors.date && <p className="text-red-500">{errors.date.message}</p>}
+            </div>
           </span>
         </span>
 
-        <span className={` flex flex-row gap-2 ml-auto p-1 bg-[#282828] text-white rounded-md`}>
-          <button type="submit" className={` rounded p-1 `}>
+        <span className="flex flex-row gap-2 ml-auto p-1  bg-[#282828] text-white rounded-md">
+          <button type="submit" className="rounded p-1">
             Add Task
           </button>
         </span>

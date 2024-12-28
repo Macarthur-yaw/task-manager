@@ -86,7 +86,9 @@ const {submitTask}=useSubmitTask()
 
       <div
         onClick={handleClick}
-        className={`${display ? 'flex flex-col gap-6' : ''} ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} md:w-[400px] w-[80%] absolute z-20 left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-md`}
+        className={`${display ? 'flex flex-col gap-6' : ''} ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} md:w-[400px] w-[80%] absolute z-20 left-1/2 transform 
+        shadow-2xl
+        -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-md`}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col rounded-sm gap-2 ">
           <div className="flex flex-col border-b-[1px]">

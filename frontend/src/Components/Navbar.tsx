@@ -17,8 +17,9 @@ import { useEffect } from "react";
 import AddProjects from "./AddProjects";
 
 import { useAuthenticated } from "../hooks/useAuthenticated";
-import Settings from "./Settings";
+
 import api_url from "../BaseUrl";
+import ProfileManagement from "../UserPage/Profile";
 
 interface projectsTask{
   _id:string,
@@ -46,7 +47,7 @@ const Navbar = () => {
     const{tokens}=useAuthenticated()
     const fetchUserDetails=async()=>{
       try {
-      const response=  await fetch("http://localhost:8086/api/userdetails",
+      const response=  await fetch(`${api_url}/userdetails`,
         {
           method:"GET",
           headers: {
@@ -286,6 +287,10 @@ window.location.reload()
         )}
       </div>
    
+   {(settings && shownav) && (
+    <div onClick={()=>setSettings(false)} className="fixed  z-40 w-[65%]  h-screen inset-0 ">
+      </div>
+   )}
       <AnimatePresence>
         {shownav && (
           <motion.div
@@ -308,13 +313,16 @@ window.location.reload()
                   theme && "bg-[#2828282] text-white"
                 }flex flex-col gap-4`}
               >
-                <span className="flex flex-row items-center justify-between">
+                <span className="flex relative flex-row items-center justify-between">
                   {/* <img src={}/> */}
                   <div
+                  onClick={()=>setSettings(true)}
                     className={`${
                       theme ? "bg-[#282828] text-white":'hover:bg-[#f6efee]'
                     } flex flex-row cursor-pointer  rounded p-1 gap-2`}
                   >
+ 
+
                     <span className="border-[1px]   rounded-full  p-1">
                       <FaUserAlt />
                     </span>
@@ -329,6 +337,10 @@ window.location.reload()
                 <span className={`${theme && "text-white"}`}>
                   <NotificationsOutlinedIcon />
                 </span>
+                {settings && (
+      <ProfileManagement/>
+      )}
+
                 </span>
                 
               
@@ -409,9 +421,7 @@ window.location.reload()
         )}
       </AnimatePresence>
 
-      {settings && (
-       <Settings/>
-      )}
+    
 
       {add && (
         <div>

@@ -14,6 +14,9 @@ const {submitTask}=useSubmitTask()
   const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
   }
+ 
+
+  
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   console.log(api_url)
@@ -27,18 +30,19 @@ const {submitTask}=useSubmitTask()
 
   return (
     <div className="">
-      <div className='lg:w-[40%] border-2 absolute rounded-md  z-50 bg-white shadow-md top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+      <div className='lg:w-[40%] border-2 absolute rounded-md  z-50 bg-white shadow-2xl w-[80%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col rounded-sm gap-2 "
         >
+          
           <span className="flex flex-col border-b-[1px] ">
             <input
               {...register("title", {
                 required: { value: true, message: "Title is required" },
                 maxLength: { value: 20, message: "Title should be less than 20 characters" }
               })}
-              placeholder="Task title"
+              placeholder="Project title"
               className={`p-2 text-xl outline-none `}
             />
             <p className='text-red-500'>
@@ -64,7 +68,7 @@ const {submitTask}=useSubmitTask()
                     <DateTimePicker
                       value={selectedDate}
                       onChange={handleDateChange}
-                      label="Choose deadline of tasks"
+                      label="Choose deadline of projects"
                     />
                   </DemoContainer>
                 </LocalizationProvider>
