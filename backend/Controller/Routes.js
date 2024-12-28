@@ -396,6 +396,24 @@ router.get('/projects', AuthMiddleware, async (req, res) => {
   }
 });
 
+
+router.get('/projectTask/:projectId', AuthMiddleware, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    
+
+
+    const projectDetails = await project.findOne({ _id: projectId });
+    if (!projectDetails) {
+      return res.status(404).send({ success: false, message: 'Project not found' });
+    }
+    res.status(200).send({ data: projectDetails.projectTask, success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+})
+
 /**
  * @swagger
  * /projectTask/{userId}/{id}:
@@ -432,24 +450,37 @@ router.get('/projects', AuthMiddleware, async (req, res) => {
  *       500:
  *         description: Internal Server Error
  */
-router.post('/projectTask/:userId/:id', authMiddleware, async (req, res) => {
+router.post('/projectTask', AuthMiddleware, async (req, res) => {
   try {
-    const { userId, id } = req.params;
-    const { title, date, description } = req.body;
-    await project.updateOne({
-      _id: id,
-      UserId: userId
+
+   
+    const { title, date, description,email } = req.body;
+
+    let id;
+    if(email){
+      const user = await users.findOne
+      ({ Email: email });
+      id=user._id
+    }
+    else{
+      id=userId
+    }
+
+
+  const results=  await project.updateOne({
+    
+      UserId: id
     }, {
       $push: {
         projectTask: {
-          UserId: userId,
+        
           title: title,
           date: date,
           description: description
         }
       }
     });
-    res.status(201).json({ success: true });
+    res.status(201).json({ success: true,results:results });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });

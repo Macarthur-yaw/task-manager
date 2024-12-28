@@ -21,7 +21,7 @@ const TasksReminder = async () => {
 
         const { Email } = user;
         const taskName = t.Title;
-        const taskDeadline = t.Date;
+        const taskDeadline = t.Date.getMinutes;
         const taskDescription = t.Description;
         const taskStatus = t.Status;
 
