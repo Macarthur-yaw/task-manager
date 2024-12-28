@@ -7,7 +7,7 @@ import { useFetch } from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
 import { CircularProgress } from '@mui/material'
 import { Google } from '@mui/icons-material'
-import api_url from '../BaseUrl'
+
 
 export type Formdata={
     email:string,
