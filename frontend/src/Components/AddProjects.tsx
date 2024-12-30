@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -13,13 +13,16 @@ import {
 } from '@mui/material';
 import api_url from '../BaseUrl';
 import { useSubmitTask } from '../hooks/useSubmit';
+import {CircularProgress} from '@mui/material';
+import { projectsTask } from './Navbar';
 type propTypes={
   display:boolean,
-  handleDisplay:()=>void
+  handleDisplay:()=>void,
+  addNewProject:(newProject:projectsTask)=>void
 }
-const AddTasks = ({ display, handleDisplay }:propTypes) => {
+const AddTasks = ({ display, handleDisplay,addNewProject }:propTypes) => {
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-  const { submitTask } = useSubmitTask();
+  const { submitTask ,isSubmitting,response} = useSubmitTask();
 
   const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
@@ -33,16 +36,22 @@ const AddTasks = ({ display, handleDisplay }:propTypes) => {
   } = useForm();
 
   const onSubmit = async (data: any) => {
+   
     submitTask({
       apiUrl: `${api_url}/projects`,
       formData: data,
       selectedDate: selectedDate?.toISOString(),
     });
     reset();
+   console.log(response)
     setSelectedDate(null);
-    handleDisplay();
+    
   };
-
+useEffect(()=>{
+if(response){
+  addNewProject(response)
+}
+},[response])
   return (
     <Dialog open={display} onClose={handleDisplay} fullWidth maxWidth="sm">
       <DialogTitle>Add Project</DialogTitle>
@@ -89,12 +98,20 @@ const AddTasks = ({ display, handleDisplay }:propTypes) => {
           </div>
         </DialogContent>
         <DialogActions>
-        <Button type="submit" color='primary' variant='contained'>
-            Add Project
+        <Button type="submit"
+        
+        color='primary' variant='contained'>
+          {
+              isSubmitting ? (<CircularProgress color='inherit'/>):'Add Project'
+            }
           </Button>
-          <Button onClick={handleDisplay} color="warning">
+        {
+          !isSubmitting && (
+            <Button onClick={handleDisplay} color="warning">
             Cancel
           </Button>
+          )
+        } 
           
         </DialogActions>
       </form>

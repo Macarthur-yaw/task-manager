@@ -24,11 +24,11 @@ import ProfileManagement from "../UserPage/Profile";
 import AlertDialog from "./Subscribe";
 
 
-interface projectsTask{
-  _id:string,
+export interface projectsTask{
+  Userid:string,
   Title:string,
-  // Description:string,
-  dueDate:Date
+ 
+  Date:Date
 }
 const Navbar = () => {
   const [theme] = useState(() => {
@@ -48,6 +48,13 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const[display,setDisplay]=useState<boolean>(false)
   const[show,setShow]=useState<boolean>(false)
+
+  const addNewProject=(newProject:projectsTask)=>{
+    
+      setProjects(prevProjects=>[...prevProjects,newProject]);
+    
+  }
+
   useEffect(() => {
     localStorage.setItem('theme', JSON.stringify(theme));
  
@@ -78,37 +85,37 @@ const Navbar = () => {
   }, [theme]);
 
  
-  
+  async function getProjects(){
+    try {
+    const id=localStorage.getItem('accessToken')
+    let results: string = "";
+    if(id){
+    results=JSON.parse(id)
+    }
+      const getData= await fetch(`${api_url}/projects`,
+      {
+        headers:{
+          "Authorization":`Bearer ${results}`
+        }
+      })
+      const data=await getData.json()
+     console.log(data);
+     if(data)
+     {
+      setProjects(data.data)
+     }
+     
+    
+    
+    } catch (error) {
+      console.log(error)
+      
+    }
+      }
 
   useEffect(
     () => {
-      async function getProjects(){
-        try {
-        const id=localStorage.getItem('accessToken')
-        let results: string = "";
-        if(id){
-        results=JSON.parse(id)
-        }
-          const getData= await fetch(`${api_url}/projects`,
-          {
-            headers:{
-              "Authorization":`Bearer ${results}`
-            }
-          })
-          const data=await getData.json()
-         console.log(data);
-         if(data)
-         {
-          setProjects(data.data)
-         }
-         
-        
-        
-        } catch (error) {
-          console.log(error)
-          
-        }
-          }
+      
     
       getProjects()
     }, []
@@ -262,7 +269,7 @@ sendData={handleSubscribe}
 {
   projects.map((content)=>{
     return(
-      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
+      <Link to={`/dashboard/projects/${content.Userid}`} >     <div key={content.Userid} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >
@@ -411,7 +418,7 @@ sendData={handleSubscribe}
 {
   projects.map((content)=>{
     return(
-      <Link to={`/dashboard/projects/${content._id}`} >     <div key={content._id} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
+      <Link to={`/dashboard/projects/${content.Userid}`} >     <div key={content.Userid} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >
@@ -449,7 +456,7 @@ sendData={handleSubscribe}
       <div >
        
           
-            <AddProjects 
+            <AddProjects addNewProject={addNewProject}
             display={display}
             handleDisplay={handleDisplay}
             />
