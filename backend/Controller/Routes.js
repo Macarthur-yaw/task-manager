@@ -106,8 +106,8 @@ router.post('/tasks', AuthMiddleware, async (req, res) => {
       Date: date,
       UserId: id,
     });
-    await newTask.save();
-    res.status(201).json({ success: true });
+   const results= await newTask.save();
+    res.status(201).json({ success: true,results:results });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -339,8 +339,8 @@ console.log(req.body)
       Date: date,
       UserId: id,
     });
-    await newProject.save();
-    res.status(201).json({ success: true });
+   const savedProject= await newProject.save();
+    res.status(201).json({ success: true,new:savedProject });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });

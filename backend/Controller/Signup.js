@@ -66,7 +66,18 @@ const returnOtp = require("../Utils/OtpGenerator");
 router.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
 
+  if (!email || email.trim() === "") {
+    return res.status(400).send({ success: false, message: "Email is required." });
+  }
+  if (!username || username.trim() === "") {
+    return res.status(400).send({ success: false, message: "Username is required." });
+  }
+  if (!password || password.trim() === "") {
+    return res.status(400).send({ success: false, message: "Password is required." });
+  }
+
   try {
+    console.log("Checking for existing user with email:", email);
     const existingUser = await users.findOne({ Email: email });
 
     if (existingUser) {
@@ -80,9 +91,9 @@ router.post("/signup", async (req, res) => {
       Password: hashedPassword,
     });
 
+    console.log("Saving new user:", user);
     await user.save();
 
-    
     const otpNumber = returnOtp();
     await saveOtp(email, otpNumber);
     await sendEmail(email, otpNumber, "OTP Verification");
@@ -92,7 +103,7 @@ router.post("/signup", async (req, res) => {
       message: "OTP sent to your email for verification",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error during signup:", error);
     return res.status(500).send({ success: false, message: "Internal server error" });
   }
 });
