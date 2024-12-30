@@ -31,6 +31,10 @@ const TaskList: React.FC = () => {
 const[done,setDone]=useState<boolean>(false)
 const[theme,setTheme]=useState<boolean>(false)
 const[showDetails,setShowDetails]=useState<boolean>(false)
+const[show,setShow]=useState<boolean>(false)
+const handleShow=()=>{
+  setShow(false)
+}
 useEffect(() => {
     fetchData();
   // localStorage.getItem('themes')
@@ -205,6 +209,8 @@ In progress
           onClick={()=>setDisplay(false)}
           className="fixed top-0 left-0 bg-black w-full h-screen bg-opacity-50 z-50">
             <AddTasks
+            show={show}
+            handleShow={handleShow}
               taskId={taskId}
               handleCallback={handleCallback}
               inputContent={inputContent}
