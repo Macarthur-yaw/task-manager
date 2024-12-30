@@ -6,13 +6,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import AddTasks from "./AddTasks";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
-import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
 import TaskIcon from "@mui/icons-material/Task";
 import AddIcon from "@mui/icons-material/Add";
 import Add from "@mui/icons-material/Add";
-import WbSunnyOutlined from "@mui/icons-material/WbSunnyOutlined";
+
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useEffect } from "react";
 import AddProjects from "./AddProjects";
 
@@ -20,6 +21,8 @@ import { useAuthenticated } from "../hooks/useAuthenticated";
 
 import api_url from "../BaseUrl";
 import ProfileManagement from "../UserPage/Profile";
+import AlertDialog from "./Subscribe";
+
 
 interface projectsTask{
   _id:string,
@@ -28,18 +31,23 @@ interface projectsTask{
   dueDate:Date
 }
 const Navbar = () => {
-  const [theme, setTheme] = useState(() => {
+  const [theme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme ? JSON.parse(storedTheme) : false;
   });
 
   
   const [settings, setSettings] = useState<boolean>(false);
-  const [add, setAdd] = useState<boolean>(false);
+ 
   const [shownav, setShownav] = useState(false);
-  const[addprojects,setAddprojects]=useState<boolean>(false)
+ 
   const[projects,setProjects]=useState<projectsTask[]>([])
   const[name,setName]=useState("")
+  const[subscribe,setSubscribe]=useState<boolean>(false)
+  const[info,setInfo]=useState<string>("")  
+  const [open, setOpen] = useState(false);
+  const[display,setDisplay]=useState<boolean>(false)
+  const[show,setShow]=useState<boolean>(false)
   useEffect(() => {
     localStorage.setItem('theme', JSON.stringify(theme));
  
@@ -69,10 +77,7 @@ const Navbar = () => {
     fetchUserDetails()
   }, [theme]);
 
-  const changeDisplay = () => {
-    setTheme((prevTheme:boolean) => !prevTheme);
-window.location.reload()
-  };
+ 
   
 
   useEffect(
@@ -111,17 +116,28 @@ window.location.reload()
 
   
  
-  function addProjects(){
-    setAddprojects(!false)  
-    // setShownav(false)
-      }
-
-  
   
 
   
+  
+      const handleClickOpen = (events:string) => {
+        setOpen(true);
+        setInfo(events)
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+  const handleDisplay=()=>{
+    setDisplay(false)
+  }
+  const handleShow=()=>{
+setShow(false)
+  }
 
- 
+ const handleSubscribe=(data:boolean)=>{
+  setSubscribe(data)
+ }
 
 
 
@@ -162,47 +178,31 @@ window.location.reload()
                 </div>{" "}
                 {/* <h2 className='text-[0.8rem] text-gray-500'>arthurkevin1260@gmail.com</h2> */}
               </div>
-              <span className={`${theme && "text-white"}`}>
-                <NotificationsOutlinedIcon />
-              </span>
+            
+             {subscribe ? (
+                <span
+                onClick={()=>handleClickOpen("subscribe")}
+                className={`${theme && "text-white"} cursor-pointer`}>
+<NotificationsIcon/>
+</span>
+             ):(
+              <span
+              onClick={()=>handleClickOpen("unsubscribe")}
+              className={`${theme && "text-white"} cursor-pointer`}>
+              <NotificationsOutlinedIcon />
             </span>
-           
-            {settings && (
-              <div
-                onClick={() => setSettings(false)}
-                className={`${
-                  settings
-                    ? " w-full h-screen fixed bg-opacity-50 top-0 left-0 z-20 bg-black"
-                    : ""
-                } `}
-              >
-                <div className="absolute top-1/2   md:w-[100%]">
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className={`${
-                      theme ? "bg-[#282828] text-white" : "bg-white"
-                    } w-[100%] transform  -translate-y-1/2 absolute left-1/2  -translate-x-1/2 p-6 rounded-md md:w-[30%] ws-[100%]`}
-                  >
-                    <h2 className="text-lg font-semibold mb-4">
-                      Theme Settings
-                    </h2>
-                    <div className="flex flex-row items-center gap-2 mb-2">
-                  { theme ?   (<button onClick={changeDisplay} >
-               
-                    Dark Theme <WbSunnyOutlined/>
-                      </button>):(
-                        <button onClick={changeDisplay}>
-                              Light Theme <DarkModeOutlinedIcon/>
-                        </button>
-                      )}
-                    </div>
-                    {/* <button  className="text-blue-500 hover:text-blue-700 cursor-pointer">
-          Close
-        </button> */}
-                  </div>
-                </div>
-              </div>
-            )}
+             )
+             
+            }    
+              
+            </span>
+       
+
+
+<AlertDialog 
+info={info}
+sendData={handleSubscribe}
+ open={open}  handleClose={handleClose}/>
 
             
           </div>
@@ -237,7 +237,7 @@ window.location.reload()
             </Link>
 
             <li
-              onClick={() => setAdd(true)}
+              onClick={() => setShow(true)}
               className={`flex flex-row gap-2 cursor-pointer ${
                 theme ? "text-white " : "text-[#202020] hover:bg-[#f6efee]"
               }   rounded p-2 text-[14px] items-center `}
@@ -254,7 +254,8 @@ window.location.reload()
             Projects
 
           </span>
-<span className="" onClick={addProjects}>            <AddIcon/>
+<span className="" onClick={()=>setDisplay(true)}>            <AddIcon 
+/>
 </span>
 </div>
 <div className="flex flex-col gap-2 mt-4 rounded w-full">
@@ -275,16 +276,9 @@ window.location.reload()
   </div>
           </span>
         </nav>
-        {add && (
-          <div>
-            <div
-              onClick={() => setAdd(false)}
-              className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50"
-            >
-              <AddTasks />
-            </div>
-          </div>
-        )}
+        
+              <AddTasks show={show} handleShow={handleShow} />
+      
       </div>
    
    {(settings && shownav) && (
@@ -334,9 +328,23 @@ window.location.reload()
                       </span>
                     </div>{" "}
                   </div>
-                <span className={`${theme && "text-white"}`}>
-                  <NotificationsOutlinedIcon />
-                </span>
+               
+                  {subscribe ? (
+                <span
+                onClick={()=>handleClickOpen("subscribe")}
+                className={`${theme && "text-white"} cursor-pointer`}>
+<NotificationsIcon/>
+</span>
+             ):(
+              <span
+              onClick={()=>handleClickOpen("unsubscribe")}
+              className={`${theme && "text-white"} cursor-pointer`}>
+              <NotificationsOutlinedIcon />
+            </span>
+             )
+             
+            }   
+
                 {settings && (
       <ProfileManagement/>
       )}
@@ -377,7 +385,8 @@ window.location.reload()
                 </Link>
 
                 <li
-                  onClick={() => setAdd(true)}
+                onClick={() => setShow(true)}
+                 
                   className={`flex flex-row gap-2 cursor-pointer ${
                     theme ? "text-white " : "text-[#202020] hover:bg-[#f6efee]"
                   }   rounded p-2 text-[14px] items-center `}
@@ -395,7 +404,7 @@ window.location.reload()
             Projects
 
           </span>
-<span className="" onClick={()=>setAddprojects(true)}>            <AddIcon/>
+<span className="" onClick={()=>setDisplay(true)}>            <AddIcon/>
 </span>
 </div>
 <div className="flex flex-col gap-2 mt-4 rounded w-full">
@@ -423,20 +432,9 @@ window.location.reload()
 
     
 
-      {add && (
-        <div>
-          <div
-            onClick={() => setAdd(false)}
-            className={`${
-              add
-                ? "top-0 left-0 z-50 bg-black bg-opacity-30 fixed w-full h-screen"
-                : ""
-            }`}
-          >
-            <AddTasks />
-          </div>
-        </div>
-      )}
+ 
+            <AddTasks show={show} handleShow={handleShow} />
+      
 
       <div
         onClick={() => setShownav(false)}
@@ -449,18 +447,15 @@ window.location.reload()
 
 
       <div >
-        {addprojects && (
-          <div>
-            <AddProjects />
-          </div>
-        )}
+       
+          
+            <AddProjects 
+            display={display}
+            handleDisplay={handleDisplay}
+            />
 
-        {
-          addprojects && (
-            <div onClick={()=>setAddprojects(false)} className='bg-black bg-opacity-40 fixed z-30 top-0 left-0 w-full h-screen'>
-            </div>
-          )
-        }
+       
+      
       </div>
     </div>
   );
