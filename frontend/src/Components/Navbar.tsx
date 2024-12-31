@@ -172,7 +172,9 @@ setShow(false)
           <div className={`flex flex-col gap-4 ${theme && "text-[#fff]"}`}>
             <span className="flex flex-row items-center justify-between">
               {/* <img src={}/> */}
-              <div className={ `flex flex-row cursor-pointer  ${theme ? '':'hover:bg-[#f6efee]'} rounded p-1 gap-2`}>
+              <div
+              onClick={()=>setSettings(true)}
+              className={ `flex flex-row cursor-pointer  ${theme ? '':'hover:bg-[#f6efee]'} rounded p-1 gap-2`}>
                 <span className="border-[1px]   rounded-full  p-1">
                   <FaUserAlt />
                 </span>
@@ -185,7 +187,18 @@ setShow(false)
                 </div>{" "}
                 {/* <h2 className='text-[0.8rem] text-gray-500'>arthurkevin1260@gmail.com</h2> */}
               </div>
-            
+              {settings && (
+      <ProfileManagement/>
+      )}    
+
+
+    <div
+    onClick={()=>setSettings(false)}
+    className={`${settings ? 'fixed w-full h-screen  top-0 left-0':''} `}>
+
+    </div>
+ 
+
              {subscribe ? (
                 <span
                 onClick={()=>handleClickOpen("subscribe")}
