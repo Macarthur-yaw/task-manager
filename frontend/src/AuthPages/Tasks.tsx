@@ -1,115 +1,89 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
-import TaskIcon from '@mui/icons-material/Task';
+import React, { useState } from 'react';
+import {
+  Box,
+  Typography,
+  IconButton,
+ 
+
+
+  Checkbox,
+} from '@mui/material';
+import {
+
+  MoreVert as MoreVertIcon,
+  
+} from '@mui/icons-material';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
 interface Task {
-  _id: string;
-  Title: string;
-  Description: string;
-  dueDate?: string;
-  Date: string;
-  Status: string;
+  id: number;
+  title: string;
+  due: string;
+  completed: boolean;
 }
 
-const TaskComponent: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [count, setCount] = useState<number>(0);
-const[inprogress,setInProgress]=useState<number>(0)
-const[completed,setCompleted]=useState<number>(0)
-const[theme,setTheme]=useState<boolean>(false)
-// const[token,setToken]=useState<string>('')
 
 
 
 
+const TaskDashboard: React.FC = () => {
+  const [tasks] = useState<Task[]>([
+    { id: 1, title: 'Finish monthly reporting', due: 'Today', completed: true },
+    { id: 2, title: 'Contract signing', due: 'Today', completed: false },
+    { id: 3, title: 'Market overview keyno...', due: 'Tomorrow', completed: false },
+    { id: 4, title: 'Project research', due: 'Tomorrow', completed: false },
+    { id: 5, title: 'Prepare invoices', due: 'This week', completed: false },
+  ]);
 
-useEffect(() => {
-   
-   const theme= localStorage.getItem('theme')
-   setTheme(theme ? JSON.parse(theme):false)
-
-   const accessToken=localStorage.getItem('accessToken');
-  console.log(accessToken)
  
-  const fetchTasks = async () => {
-    try {
-      const id = localStorage.getItem('accessToken');
-       
-
-   
-      const response = await axios.get(`https://web-api-db7z.onrender.com/api/tasks/${id}`);
-  if(response.data.data){
-    setTasks(response.data.data);
-    countTasks(response.data.data);
-  
-  }
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  };
-  
-  fetchTasks();
-  
-  }, [theme]);
-
-console.log(tasks);
-
-  const countTasks = (taskList: Task[]) => {
-    const notCompletedCount = taskList.filter(task => task.Status === 'not_completed').length;
-    setCount(notCompletedCount);
-    const completed=taskList.filter(tasks=>tasks.Status==='completed').length
-    setCompleted(completed)
-    const inprogress=taskList.filter(tasks=>tasks.Status==='in_progress').length
-  
-    setInProgress(inprogress)};
-
 
  
 
   return (
-    <div className={`${theme ? 'bg-[#1e1e1e]   ':'bg-white'}   p-4 pt-20  md:p-8 min-h-screen min-w-screen`}>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6  mb-4">
-  <div
-  className={`p-2 w-[100%]  h-[150px] ${theme ? 'bg-[#282828] text-white border-[1px] border-gray-400':'bg-white border-white' }  flex flex-col gap-1  border rounded shadow-sm cursor-pointer `}
->
- 
-<span className={`border-[1px]   w-fit h-fit p-1 rounded-sm mb-2  ${theme ? 'bg-[#4f2929] border-[#4f2929]':'bg-gray-100'}`}>    
- <ListAltIcon className={`${theme ? 'text-white':'text-green-500'}  `} style={{fontSize:"20px"}} />
- </span>
-      <p className="text-sm ">Tasks Left</p>
-      <p className="md:text-5xl text-xl font-medium">{count}</p>
-    </div>
-    <div
+    <div className="p-4 bg-gray-50 h-screen">
+    <div className="flex flex-col sm:flex-row gap-6">
+      {/* Calendar Section */}
+      <div className="flex-1 bg-white p-4 rounded-lg shadow-md">
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateCalendar />
+        </LocalizationProvider>
+      </div>
   
-  className={`w-[100%]  h-[150px] p-2 ${theme ? 'bg-[#282828] text-white border-[1px] border-gray-400':'bg-white border-white' }  flex flex-col gap-1 rounded shadow-sm cursor-pointer `}
->   
-<span className={`border-[1px]   w-fit h-fit p-1 rounded-sm mb-2  ${theme ? 'bg-[#4f2929] border-[#4f2929]':'bg-gray-100'}`}>    
- <DoneAllIcon className={`${theme ? 'text-white':'text-green-500'}  `} style={{fontSize:"20px"}} />
- </span>
-  <p className="text-sm ">Tasks in progress</p>
-      <p className="md:text-5xl text-xl font-medium">{inprogress}</p>
-    </div>
-    
-    <div
- 
-  className={`w-[100%] ${theme ? 'bg-[#282828] text-white border-[1px] border-gray-400':'bg-white border-white' } h-[150px] flex flex-col  gap-1  p-2 border rounded shadow-sm cursor-pointer `}
-> 
-<span className={`border-[1px]   w-fit h-fit p-1 rounded-sm mb-2  ${theme ? 'bg-[#4f2929] border-[#4f2929]':'bg-gray-100'}`}>    
- <TaskIcon className={`${theme ? 'text-white':'text-green-500'}  `} style={{fontSize:"20px"}} />
- </span>
-
-   <p className="text-sm ">Tasks Done</p>
-      <p className="md:text-5xl text-xl font-medium">{completed}</p>
+      {/* Task Section */}
+      <div className="flex-1 bg-white rounded-lg shadow-md p-4">
+        <Box>
+          <div className="flex justify-between items-center mb-4">
+            <Typography variant="h6">My tasks (05)</Typography>
+            <IconButton>
+              <MoreVertIcon />
+            </IconButton>
+          </div>
+          <div className="space-y-4">
+            {tasks.map((task) => (
+              <div
+                key={task.id}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-3">
+                  <Checkbox checked={task.completed} />
+                  <Typography
+                    className={task.completed ? 'line-through' : ''}
+                  >
+                    {task.title}
+                  </Typography>
+                </div>
+                <Typography color="textSecondary">{task.due}</Typography>
+              </div>
+            ))}
+          </div>
+        </Box>
+      </div>
     </div>
   </div>
-
-
-      
-    </div>
+  
   );
 };
 
-export default TaskComponent;
+export default TaskDashboard;

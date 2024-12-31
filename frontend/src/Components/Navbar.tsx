@@ -1,4 +1,4 @@
-import { FaUserAlt, FaAngleDown } from "react-icons/fa";
+
 import {  useState } from "react";
 
 import { Link } from "react-router-dom";
@@ -7,23 +7,23 @@ import AddTasks from "./AddTasks";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+
 import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
 import TaskIcon from "@mui/icons-material/Task";
 import AddIcon from "@mui/icons-material/Add";
 import Add from "@mui/icons-material/Add";
 
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useEffect } from "react";
 import AddProjects from "./AddProjects";
 
-import { useAuthenticated } from "../hooks/useAuthenticated";
+
 
 import api_url from "../BaseUrl";
-import ProfileManagement from "../UserPage/Profile";
-import AlertDialog from "./Subscribe";
 
 
+
+import BasicMenu from "./AboutMore";
+import SettingsIcon from '@mui/icons-material/Settings';
 export interface projectsTask{
   Userid:string,
   Title:string,
@@ -37,15 +37,13 @@ const Navbar = () => {
   });
 
   
-  const [settings, setSettings] = useState<boolean>(false);
+  
  
   const [shownav, setShownav] = useState(false);
  
   const[projects,setProjects]=useState<projectsTask[]>([])
-  const[name,setName]=useState("")
-  const[subscribe,setSubscribe]=useState<boolean>(false)
-  const[info,setInfo]=useState<string>("")  
-  const [open, setOpen] = useState(false);
+ 
+  
   const[display,setDisplay]=useState<boolean>(false)
   const[show,setShow]=useState<boolean>(false)
 
@@ -55,34 +53,7 @@ const Navbar = () => {
     
   }
 
-  useEffect(() => {
-    localStorage.setItem('theme', JSON.stringify(theme));
  
-
-    const{tokens}=useAuthenticated()
-    const fetchUserDetails=async()=>{
-      try {
-      const response=  await fetch(`${api_url}/userdetails`,
-        {
-          method:"GET",
-          headers: {
-            "Authorization": `Bearer ${tokens}`,
-            "Content-Type": "application/json",  
-          },
-        }
-      )
-      const data =await response.json()
-      if(data){
-        setName(data.message.username)
-      }
-      console.log(data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    fetchUserDetails()
-  }, [theme]);
 
  
   async function getProjects(){
@@ -127,14 +98,9 @@ const Navbar = () => {
 
   
   
-      const handleClickOpen = (events:string) => {
-        setOpen(true);
-        setInfo(events)
-      };
     
-      const handleClose = () => {
-        setOpen(false);
-      };
+    
+    
   const handleDisplay=()=>{
     setDisplay(false)
   }
@@ -142,9 +108,7 @@ const Navbar = () => {
 setShow(false)
   }
 
- const handleSubscribe=(data:boolean)=>{
-  setSubscribe(data)
- }
+ 
 
 
 
@@ -153,7 +117,7 @@ setShow(false)
     <div className={`${theme ? 'bg-[#1e1e1e]  h-screen pt-6':'pl-4 pt-6 '}   md:p-0`}>
       <span
         onClick={() => setShownav(true)}
-        className={`${theme ? 'pl-4 mt-2 text-white':''} h-screen md:hidden cursor-pointer absolute `}
+        className={`${theme ? 'pl-4 mt-2 text-white':''} h-screen bg-white border-b  md:hidden cursor-pointer fixed `}
       >
         <MenuOutlinedIcon />
       </span>
@@ -169,63 +133,7 @@ setShow(false)
     )} */}
 
         <nav className="flex flex-col ">
-          <div className={`flex flex-col gap-4 ${theme && "text-[#fff]"}`}>
-            <span className="flex flex-row items-center justify-between">
-              {/* <img src={}/> */}
-              <div
-              onClick={()=>setSettings(true)}
-              className={ `flex flex-row cursor-pointer  ${theme ? '':'hover:bg-[#f6efee]'} rounded p-1 gap-2`}>
-                <span className="border-[1px]   rounded-full  p-1">
-                  <FaUserAlt />
-                </span>
-                <div className=" flex flex-row items-center gap-1">
-                  <h1 className="text-[0.8rem] ">Hello, {name}</h1>
-                  <span className="text-[12px]">
-                    {" "}
-                    <FaAngleDown />
-                  </span>
-                </div>{" "}
-                {/* <h2 className='text-[0.8rem] text-gray-500'>arthurkevin1260@gmail.com</h2> */}
-              </div>
-              {settings && (
-      <ProfileManagement/>
-      )}    
-
-
-    <div
-    onClick={()=>setSettings(false)}
-    className={`${settings ? 'fixed w-full h-screen  top-0 left-0':''} `}>
-
-    </div>
- 
-
-             {subscribe ? (
-                <span
-                onClick={()=>handleClickOpen("subscribe")}
-                className={`${theme && "text-white"} cursor-pointer`}>
-<NotificationsIcon/>
-</span>
-             ):(
-              <span
-              onClick={()=>handleClickOpen("unsubscribe")}
-              className={`${theme && "text-white"} cursor-pointer`}>
-              <NotificationsOutlinedIcon />
-            </span>
-             )
-             
-            }    
-              
-            </span>
-       
-
-
-<AlertDialog 
-info={info}
-sendData={handleSubscribe}
- open={open}  handleClose={handleClose}/>
-
-            
-          </div>
+        
 
           <span
             className={`mt-6 mb-4 text-[12px]  ${
@@ -278,33 +186,51 @@ sendData={handleSubscribe}
 />
 </span>
 </div>
-<div className="flex flex-col gap-2 mt-4 rounded w-full">
+
+<div className="flex flex-col h-64 
+ scrollbar-[0.1px] scrollbar-thumb-gray-400 scrollbar-track-gray-200
+overflow-y-scroll  gap-2 mt-4 rounded w-full ">
 {
   projects.map((content)=>{
     return(
-      <Link to={`/dashboard/projects/${content.Userid}`} >     <div key={content.Userid} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
+        <div key={content.Userid} className="flex flex-row   justify-between cursor-pointer  w-full
+        hover:bg-gray-300 rounded
+        active:bg-gray-300
+        ">
+     <Link to={`/dashboard/projects/${content.Userid}`} className="w-full  py-2" >  
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >
         {content.Title}
 
       </span>
+</Link>
+      <span className="py-1">
+
+
+<BasicMenu/>
+      </span>
       
-      </div></Link>
+      </div>
   )
 })}
   </div>
+         </span>
+
+         <span className="pt-8">
+            <button className="px-3 inline-flex items-center gap-2">
+              <SettingsIcon/>
+              Settings</button>
+
           </span>
+
         </nav>
         
               <AddTasks show={show} handleShow={handleShow} />
       
       </div>
    
-   {(settings && shownav) && (
-    <div onClick={()=>setSettings(false)} className="fixed  z-40 w-[65%]  h-screen inset-0 ">
-      </div>
-   )}
+   
       <AnimatePresence>
         {shownav && (
           <motion.div
@@ -316,64 +242,16 @@ sendData={handleSubscribe}
               theme
                 ? "bg-[#282828] border-[#282828] text-white"
                 : " border-[1px] bg-[#faf8f7] border-[#faf8f7]"
-            } md:hidden fixed top-0 z-10 left-0 h-screen  p-2 pt-4 w-[65%]`}
+            } md:hidden fixed  top-0 z-50 left-0 h-screen  p-2 pt-4 w-[65%]`}
             onClick={(e)=>e.stopPropagation()}
           >
        
 
-            <nav className="flex flex-col ">
-              <div
-                className={`${
-                  theme && "bg-[#2828282] text-white"
-                }flex flex-col gap-4`}
-              >
-                <span className="flex relative flex-row items-center justify-between">
-                  {/* <img src={}/> */}
-                  <div
-                  onClick={()=>setSettings(true)}
-                    className={`${
-                      theme ? "bg-[#282828] text-white":'hover:bg-[#f6efee]'
-                    } flex flex-row cursor-pointer  rounded p-1 gap-2`}
-                  >
- 
-
-                    <span className="border-[1px]   rounded-full  p-1">
-                      <FaUserAlt />
-                    </span>
-                    <div className=" flex flex-row items-center gap-1">
-                      <h1 className="text-[0.8rem] ">Hello {name}</h1>
-                      <span className="text-[12px]" >
-                        {" "}
-                        <FaAngleDown />
-                      </span>
-                    </div>{" "}
-                  </div>
-               
-                  {subscribe ? (
-                <span
-                onClick={()=>handleClickOpen("subscribe")}
-                className={`${theme && "text-white"} cursor-pointer`}>
-<NotificationsIcon/>
+            <nav className="flex flex-col justify-between  ">
+    
+<span>
+  <h1 className="font-bold text-[25px] ">Taskify</h1>
 </span>
-             ):(
-              <span
-              onClick={()=>handleClickOpen("unsubscribe")}
-              className={`${theme && "text-white"} cursor-pointer`}>
-              <NotificationsOutlinedIcon />
-            </span>
-             )
-             
-            }   
-
-                {settings && (
-      <ProfileManagement/>
-      )}
-
-                </span>
-                
-              
-   </div>
-
               <span
                 className={`mt-6 mb-4 text-[12px] ${
                   theme ? "text-white" : "text-gray-600"
@@ -416,7 +294,7 @@ sendData={handleSubscribe}
                 </li>
               </ul>
 
-              <span className="flex flex-col cursor-pointer justify-between items-center mt-10  text-sm  w-full">
+              <span className="flex flex-col cursor-pointer justify-between  items-center mt-10  text-sm  w-full">
 <div className="flex flex-row justify-between cursor-pointer  w-full ">
           <span
             className={`{theme ? 'text-white':'text-gray-600'}`}
@@ -427,22 +305,42 @@ sendData={handleSubscribe}
 <span className="" onClick={()=>setDisplay(true)}>            <AddIcon/>
 </span>
 </div>
-<div className="flex flex-col gap-2 mt-4 rounded w-full">
+<div className="flex flex-col
+h-64  overflow-y-scroll
+gap-2 mt-4 rounded w-full">
 {
   projects.map((content)=>{
     return(
-      <Link to={`/dashboard/projects/${content.Userid}`} >     <div key={content.Userid} className="flex flex-row  gap-4 justify-between cursor-pointer  w-full p-2">
+        <div key={content.Userid} className="flex flex-row   justify-between cursor-pointer  w-full
+        hover:bg-gray-300 rounded
+        active:bg-gray-300
+        ">
+     <Link to={`/dashboard/projects/${content.Userid}`} className="w-full  py-2" >  
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >
         {content.Title}
 
       </span>
+</Link>
+      <span className="py-1">
+
+
+<BasicMenu/>
+      </span>
       
-      </div></Link>
+      </div>
   )
 })}
   </div>
+          </span>
+
+
+          <span className="pt-8">
+            <button className="px-3 inline-flex items-center gap-2">
+              <SettingsIcon/>
+              Settings</button>
+
           </span>
 
             </nav>
@@ -460,7 +358,7 @@ sendData={handleSubscribe}
         onClick={() => setShownav(false)}
         className={`${
           shownav
-            ? "bg-black bg-opacity-40 fixed top-0 left-0 z-0 w-full h-screen"
+            ? "bg-black bg-opacity-40 fixed top-0 left-0 z-40 w-full h-screen"
             : ""
         }`}
       ></div>
