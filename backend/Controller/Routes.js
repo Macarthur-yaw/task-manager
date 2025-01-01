@@ -464,6 +464,7 @@ router.put('/projectTask/:id', AuthMiddleware, async (req, res) => {
 });
 
 router.get('/projects/search',AuthMiddleware,async(req,res)=>{
+  console.log(search)
   const search=req.query.search
   const{email,userId}=req.body
 
@@ -482,28 +483,50 @@ try{  let id;
   res.status(500).send({ success: false, message: 'Internal Server Error' })
 }})
 
-router.get('/projects',AuthMiddleware,async(req,res)=>{
-  const search=req.query.date
+router.get('/projects/date', AuthMiddleware, async (req, res) => {
+  const search = req.query.date;  
+  const { email, userId } = req.body;
 
-  const{email,userId}=req.body
-let id;
-try{
-  if(email){
-    const user = await users.findOne({ Email: email });
-    id=user._id
+  let id;
+  console.log(req.query);
+
+  try {
+   if (email) {
+      const user = await users.findOne({ Email: email });
+      id = user._id;
+    } else {
+      id = userId;
+    }
+
+   const searchDate = new Date(search);
+    const startOfDay = new Date(searchDate.setHours(0, 0, 0, 0)); 
+    const endOfDay = new Date(searchDate.setHours(23, 59, 59, 999)); 
+   
+    const tasksOnDate = await tasks.find({
+      UserId: id,
+      Date: {
+        $gte: startOfDay,  
+        $lt: endOfDay      
+      }
+    });
+
+    const projectsOnDate = await project.find({
+      UserId: id,
+      Date: {
+        $gte: startOfDay,  
+        $lt: endOfDay      
+      }
+    });
+
+    const allPendingTasks = [...tasksOnDate, ...projectsOnDate];
+
+    res.status(200).send({ success: true, data: allPendingTasks });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: 'Internal Server Error' });
   }
-  else{
-    id=userId
-  }
-  const tasks=await tasks.find({UserId:id,Date:search});
-  const findAllProjects=await project.find({UserId:id,Date:search});
-  const allPendingTasks=[...tasks,...findAllProjects]
+});
 
-  res.status(200).send({success:true,data:allPendingTasks})
 
-}catch(error){
-  console.error(error);
-  res.status(500).send({ success: false, message: 'Internal Server Error' })
-}})
 
 module.exports = router;
