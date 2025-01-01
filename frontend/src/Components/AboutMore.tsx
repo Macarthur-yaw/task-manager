@@ -5,7 +5,9 @@ import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-export default function BasicMenu() {
+import api_url from '../BaseUrl';
+
+export default function BasicMenu({id}:{id:string}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -14,6 +16,32 @@ export default function BasicMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const DeleteProject=async()=>{
+const getToken=localStorage.getItem('accessToken')
+let results: string = "";
+if(getToken){
+  results=JSON.parse(getToken)
+}
+
+    try {
+      await fetch(`${api_url}/projectTask/${id}`,{
+        headers:{
+          'Authorization':`Bearer ${results}`
+        },
+        method:"DELETE"
+      })
+      console.log('deleted')
+    } catch (error) {
+      console.log(error)
+    }
+    
+    
+  }
+
+  
+
+ 
 
   return (
     <div>
@@ -39,7 +67,7 @@ export default function BasicMenu() {
         <MenuItem onClick={handleClose} className='flex flex-row items-center gap-1'> 
         <EditIcon/>
         Rename Project</MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={DeleteProject}>
         <DeleteIcon/>
         Delete Project</MenuItem>
         

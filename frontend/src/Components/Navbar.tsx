@@ -27,7 +27,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 export interface projectsTask{
   Userid:string,
   Title:string,
- 
+ _id:string,
   Date:Date
 }
 const Navbar = () => {
@@ -199,7 +199,7 @@ overflow-y-scroll  gap-2 mt-4 rounded w-full ">
         hover:bg-gray-300 rounded
         active:bg-gray-300
         ">
-     <Link to={`/dashboard/projects/${content.Userid}`} className="w-full  py-2" >  
+     <Link to={`/dashboard/projects/${content._id}`} className="w-full  py-2" >  
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >
@@ -210,7 +210,7 @@ overflow-y-scroll  gap-2 mt-4 rounded w-full ">
       <span className="py-1">
 
 
-<BasicMenu/>
+<BasicMenu id={content._id}/>
       </span>
       
       </div>
@@ -321,7 +321,7 @@ gap-2 mt-4 rounded w-full">
         hover:bg-gray-300 rounded
         active:bg-gray-300
         ">
-     <Link to={`/dashboard/projects/${content.Userid}`} className="w-full  py-2" >  
+     <Link to={`/dashboard/projects/${content._id}`} className="w-full  py-2" >  
      <span
         className={`{theme ? 'text-white':'text-gray-600'} p-1 `}
       >
@@ -332,7 +332,7 @@ gap-2 mt-4 rounded w-full">
       <span className="py-1">
 
 
-<BasicMenu/>
+<BasicMenu id={content._id}/>
       </span>
       
       </div>
