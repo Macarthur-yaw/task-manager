@@ -1,24 +1,22 @@
 import { useEffect, useState } from "react";
-import AlertDialog from "./Subscribe";
+
 
 import { useAuthenticated } from "../hooks/useAuthenticated";
 import api_url from "../BaseUrl";
 
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import NotificationsIcon from '@mui/icons-material/Notifications'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AlertDialogSlide from "./Searchbox";
 import Profile from "./Profile";
+import NotificationsMenu from "./Notifications";
 
 export default function HorizonNav(){
-const[subscribe,setSubscribe]=useState<boolean>(false)
-  const[info,setInfo]=useState<string>("")  
+
+    
   const [theme] = useState(() => {
       const storedTheme = localStorage.getItem('theme');
       return storedTheme ? JSON.parse(storedTheme) : false;
     });
  
-  const [open, setOpen] = useState(false);
   
 
   const [show, setShow] = useState(false);
@@ -56,19 +54,12 @@ const[subscribe,setSubscribe]=useState<boolean>(false)
       fetchUserDetails()
     }, [theme]);
 
-      const handleClose = () => {
-            setOpen(false);
-          };
+    
 const handleClickClose=()=>{
       setShow(false)
 }
-      const handleSubscribe=(data:boolean)=>{
-            setSubscribe(data)
-           }
-           const handleClickOpen = (events:string) => {
-            setOpen(true);
-            setInfo(events)
-          };
+      
+          
 
       return (
             <nav className="md:p-2  py-4 
@@ -107,23 +98,9 @@ const handleClickClose=()=>{
 
 
    
- 
+<NotificationsMenu/>
 
-             {subscribe ? (
-                <span
-                onClick={()=>handleClickOpen("subscribe")}
-                className={`${theme && "text-white"} cursor-pointer`}>
-<NotificationsIcon/>
-</span>
-             ):(
-              <span
-              onClick={()=>handleClickOpen("unsubscribe")}
-              className={`${theme && "text-white"} cursor-pointer`}>
-              <NotificationsOutlinedIcon />
-            </span>
-             )
-             
-            }
+         
             
             <Profile/>
               
@@ -131,10 +108,6 @@ const handleClickClose=()=>{
        
 
 
-<AlertDialog 
-info={info}
-sendData={handleSubscribe}
- open={open}  handleClose={handleClose}/>
 
             
           </div>
