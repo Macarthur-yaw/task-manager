@@ -134,7 +134,7 @@ setDone(true)
   }
 
   return (
-    <div className={`${theme ? 'bg-[#1e1e1e] w-full  min-h-screen text-white':''} pt-20`}>
+    <div className={`${theme ? 'bg-[#1e1e1e] w-full  min-h-screen text-white':''} md:pt-4 pt-4`}>
  {loading && (
       <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" >
       </div>

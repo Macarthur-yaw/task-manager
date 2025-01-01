@@ -114,10 +114,10 @@ setShow(false)
 
 
   return (
-    <div className={`${theme ? 'bg-[#1e1e1e]  h-screen pt-6':'pl-4 pt-6 '}   md:p-0`}>
+    <div className={`${theme ? 'bg-[#1e1e1e]  h-screen pt-6':'  '} md:z-40  md:pl-0`}>
       <span
         onClick={() => setShownav(true)}
-        className={`${theme ? 'pl-4 mt-2 text-white':''} h-screen bg-white border-b  md:hidden cursor-pointer fixed `}
+        className={`${theme ? 'pl-4  text-white':''} h-auto bg-white z-30  top-0 pl-4 py-5   md:hidden cursor-pointer fixed `}
       >
         <MenuOutlinedIcon />
       </span>
@@ -126,15 +126,15 @@ setShow(false)
           theme
             ? "bg-[#282828] border-[#282828] w-[20%] text-white"
             : "bg-[#faf8f7] border-[#faf8f7] w-[20%] shadow-md"
-        } hidden md:block md:fixed h-screen border-[1px]  p-2 `}
+        } hidden md:block md:fixed h-screen  flex-col justify-between  border-[1px]  p-2 `}
       >
         {/* {loading && (
       <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line" />
     )} */}
 
-        <nav className="flex flex-col ">
+        <nav className="flex flex-col justify-between h-full ">
         
-
+<div className="flex flex-col justify-evenly items-start">
           <span
             className={`mt-6 mb-4 text-[12px]  ${
               theme ? "text-white" : "text-gray-600"
@@ -142,6 +142,7 @@ setShow(false)
           >
             MAIN
           </span>
+
           <ul className="flex flex-col gap-2 ">
             <Link to="/dashboard">
               <li
@@ -173,8 +174,9 @@ setShow(false)
               <AddIcon />
               Add Tasks
             </li>
-          </ul>
-<span className="flex flex-col cursor-pointer justify-between items-center mt-10  text-sm  w-full">
+          </ul>  
+
+      <span className="flex flex-col cursor-pointer justify-between items-center mt-10  text-sm  w-full">
 <div className="flex flex-row justify-between cursor-pointer  w-full ">
           <span
             className={`{theme ? 'text-white':'text-gray-600'}`}
@@ -215,7 +217,9 @@ overflow-y-scroll  gap-2 mt-4 rounded w-full ">
   )
 })}
   </div>
-         </span>
+         </span>          
+      </div>
+
 
          <span className="pt-8">
             <button className="px-3 inline-flex items-center gap-2">
@@ -249,9 +253,11 @@ overflow-y-scroll  gap-2 mt-4 rounded w-full ">
 
             <nav className="flex flex-col justify-between  ">
     
-<span>
+<span className="mb-4">
   <h1 className="font-bold text-[25px] ">Taskify</h1>
 </span>
+          
+          <div className="flex flex-col w-full justify-evenly items-start">
               <span
                 className={`mt-6 mb-4 text-[12px] ${
                   theme ? "text-white" : "text-gray-600"
@@ -259,7 +265,7 @@ overflow-y-scroll  gap-2 mt-4 rounded w-full ">
               >
                 MAIN
               </span>
-              <ul className="flex flex-col gap-2 ">
+              <ul className="flex flex-col w-full gap-2 ">
                 <Link to="/dashboard">
                   <li
                     className={`flex flex-row gap-2 cursor-pointer ${
@@ -333,7 +339,11 @@ gap-2 mt-4 rounded w-full">
   )
 })}
   </div>
-          </span>
+          </span>        
+              </div>
+             
+
+          
 
 
           <span className="pt-8">
