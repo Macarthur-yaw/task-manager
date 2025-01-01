@@ -464,7 +464,7 @@ router.put('/projectTask/:id', AuthMiddleware, async (req, res) => {
 });
 
 router.get('/projects/search',AuthMiddleware,async(req,res)=>{
-  console.log(search)
+  
   const search=req.query.search
   const{email,userId}=req.body
 
