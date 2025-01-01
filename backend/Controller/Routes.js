@@ -4,49 +4,6 @@ const { users, tasks, project } = require('../Models/Model');
 const jwt = require('jsonwebtoken');
 const AuthMiddleware = require('../Authmiddleware');
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Task:
- *       type: object
- *       properties:
- *         Title:
- *           type: string
- *         Description:
- *           type: string
- *         Date:
- *           type: string
- *           format: date
- *         UserId:
- *           type: string
- *         Status:
- *           type: string
- *     Project:
- *       type: object
- *       properties:
- *         Title:
- *           type: string
- *         Date:
- *           type: string
- *           format: date
- *         UserId:
- *           type: string
- *         projectTask:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               date:
- *                 type: string
- *                 format: date
- *               description:
- *                 type: string
- *               UserId:
- *                 type: string
- */
 
 function authMiddleware(req, res, next) {
   const userId = req.params.userId;
@@ -59,35 +16,236 @@ function authMiddleware(req, res, next) {
 
 /**
  * @swagger
- * /tasks/{userId}:
- *   post:
- *     summary: Create a new task
+ * components:
+ *   schemas:
+ *     Task:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *         description:
+ *           type: string
+ *         completed:
+ *           type: boolean
+ *         date:
+ *           type: string
+ *           format: date-time
+ *     Project:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *         description:
+ *           type: string
+ *         tasks:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Task'
+ * 
+ * /api/tasks:
+ *   get:
+ *     tags: [Tasks]
+ *     summary: Get all tasks for a user
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ * 
+ * /api/tasks/counts:
+ *   get:
+ *     tags: [Tasks]
+ *     summary: Get task counts
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Task counts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 completed:
+ *                   type: number
+ *                 not_completed:
+ *                   type: number
+ * 
+ * /api/tasks/update/{id}:
+ *   put:
+ *     tags: [Tasks]
+ *     summary: Update task completion status
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Task updated successfully
+ * 
+ * /api/tasks/delete/{id}:
+ *   delete:
+ *     tags: [Tasks]
+ *     summary: Delete a task
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully
+ * 
+ * /api/projects:
+ *   get:
+ *     tags: [Projects]
+ *     summary: Get all projects
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Project'
+ * 
+ * /api/project/{id}:
+ *   get:
+ *     tags: [Projects]
+ *     summary: Get project by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Project details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Project'
+ * 
+ * /api/projectTask/{id}:
+ *   post:
+ *     tags: [Projects]
+ *     summary: Add task to project
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               dueDate:
- *                 type: string
- *                 format: date
+ *             $ref: '#/components/schemas/Task'
  *     responses:
  *       201:
- *         description: Task created successfully
- *       500:
- *         description: Internal Server Error
+ *         description: Task added successfully
+ * 
+ * /api/project/delete/{id}:
+ *   delete:
+ *     tags: [Projects]
+ *     summary: Delete project
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Project deleted successfully
  */
+
+router.post('/tasks/status/:id', AuthMiddleware, async (req, res) => {
+
+  try {
+    const id=req.params.id
+    const {  status } = req.body;
+   const newTasks=  await tasks.findByIdAndUpdate(id, { Status: status }, { new: true });
+   res.status(200).send({ success: true, data: newTasks });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: 'Internal Server Error' });
+  }
+
+})
+
+router.put('/tasks/:id', AuthMiddleware, async (req, res) => {
+  try {
+    const id=req.params.id
+    const { title, description, date } = req.body;
+   const newTasks= await tasks.findByIdAndUpdate(id, { Title: title, Description: description, Date: date }, { new: true });
+    res.status(200).send({ success: true, data: newTasks });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: 'Internal Server Error' });
+  }
+})
+
+router.get('/tasks/counts',async(req,res)=>{
+
+  try {
+    const {email,userId}=req.body
+    let id;
+    if(email){
+      const user = await users.findOne({ Email: email });
+      id=user._id;
+    }
+    else{
+      id=userId
+    }
+    const allTasks = await tasks.find({ UserId: id });
+    const not_completed=allTasks.filter((task)=>task.Status==='not_completed')
+    const completed=allTasks.filter((task)=>task.Status==='completed')
+    const in_progress=allTasks.filter((task)=>task.Status==='in_progress')
+    res.status(200).send({success:true,not_completed:not_completed,completed:completed,in_progress:in_progress})
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: 'Internal Server Error' })}
+})
+
+router.delete('/tasks/:id', AuthMiddleware, async (req, res) => {
+  try {
+    const id=req.params.id
+    await tasks.findByIdAndDelete(id);
+    res.status(200).send({ success: true, message: 'Task deleted' });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: 'Internal Server Error' });
+  }
+})
+
 router.post('/tasks', AuthMiddleware, async (req, res) => {
   try {
     const { title, description, date ,email} = req.body;
@@ -114,34 +272,6 @@ router.post('/tasks', AuthMiddleware, async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /tasks/{userId}:
- *   get:
- *     summary: Get all tasks for a user
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: List of tasks retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Task'
- *                 success:
- *                   type: boolean
- *       500:
- *         description: Internal Server Error
- */
 router.get('/tasks', AuthMiddleware, async (req, res) => {
   try {
     console.log("hee")
@@ -163,29 +293,7 @@ router.get('/tasks', AuthMiddleware, async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /tasks/{userId}/{id}:
- *   delete:
- *     summary: Delete a specific task
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Task deleted successfully
- *       400:
- *         description: Delete operation failed
- */
-router.delete('/tasks/:userId/:id', authMiddleware, (req, res) => {
+router.delete('/tasks/:userId/:id', AuthMiddleware, (req, res) => {
   const { userId, id } = req.params;
   tasks.findByIdAndDelete({
     _id: id,
@@ -197,39 +305,6 @@ router.delete('/tasks/:userId/:id', authMiddleware, (req, res) => {
   })
 });
 
-/**
- * @swagger
- * /update/{userId}/{id}:
- *   put:
- *     summary: Update task details
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *       200:
- *         description: Task updated successfully
- *       400:
- *         description: Update operation failed
- */
 router.put('/update/:userId/:id', authMiddleware, (req, res) => {
   const { id, userId } = req.params;
   const { title, description } = req.body;
@@ -246,81 +321,8 @@ router.put('/update/:userId/:id', authMiddleware, (req, res) => {
   })
 });
 
-/**
- * @swagger
- * /tasks/{userId}/{id}:
- *   put:
- *     summary: Update task status
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: string
- *     responses:
- *       200:
- *         description: Task status updated successfully
- *       400:
- *         description: Update operation failed
- */
-router.put('/tasks/:userId/:id', authMiddleware, (req, res) => {
-  const { id, userId } = req.params;
-  const { status } = req.body;
-  tasks.findByIdAndUpdate({
-    _id: id,
-    UserId: userId
-  }, {
-    Status: status,
-  }).then(() => {
-    res.status(200).send({ success: true })
-  }).catch((err) => {
-    res.status(400).send({ success: false })
-  })
-});
 
-/**
- * @swagger
- * /projects/{userId}:
- *   post:
- *     summary: Create a new project
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               dueDate:
- *                 type: string
- *                 format: date
- *     responses:
- *       201:
- *         description: Project created successfully
- *       500:
- *         description: Internal Server Error
- */
+
 router.post('/projects',AuthMiddleware, async (req, res) => {
   try {
 console.log(req.body)
@@ -347,34 +349,6 @@ console.log(req.body)
   }
 });
 
-/**
- * @swagger
- * /projects/{userId}:
- *   get:
- *     summary: Get all projects for a user
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: List of projects retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Project'
- *                 success:
- *                   type: boolean
- *       500:
- *         description: Internal Server Error
- */
 router.get('/projects', AuthMiddleware, async (req, res) => {
   try {
     const {email,userId}=req.body
@@ -414,42 +388,6 @@ router.get('/projectTask/:projectId', AuthMiddleware, async (req, res) => {
   }
 })
 
-/**
- * @swagger
- * /projectTask/{userId}/{id}:
- *   post:
- *     summary: Add a task to a project
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               date:
- *                 type: string
- *                 format: date
- *               description:
- *                 type: string
- *     responses:
- *       201:
- *         description: Project task added successfully
- *       500:
- *         description: Internal Server Error
- */
 router.post('/projectTask', AuthMiddleware, async (req, res) => {
   try {
 
@@ -487,49 +425,85 @@ router.post('/projectTask', AuthMiddleware, async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /projectTask/{userId}/{projectId}/{taskIndex}:
- *   delete:
- *     summary: Delete a task from a project
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: projectId
- *         required: true
- *         schema:
- *           type: string
- *       - in: path
- *         name: taskIndex
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Project task deleted successfully
- *       404:
- *         description: Project not found
- *       500:
- *         description: Internal Server Error
- */
-router.delete('/projectTask/:userId/:projectId/:taskIndex', authMiddleware, async (req, res) => {
+router.delete('/projectTask/:id', AuthMiddleware, async (req, res) => {
   try {
-    const { userId, projectId, taskIndex } = req.params;
-    const projectDetails = await project.findOne({ _id: projectId, UserId: userId });
-    if (!projectDetails) {
-      return res.status(404).json({ success: false, message: 'Project not found' });
-    }
-    projectDetails.projectTask.splice(taskIndex, 1);
-    await projectDetails.save();
-    res.status(200).json({ success: true });
+    const { id } = req.params;
+   
+
+    
+    await project.deleteOne({_id:id});
+
+
+
+    res.status(200).send({ success: true,message:"deleted" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
+
+router.put('/projectTask/:id', AuthMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title } = req.body;
+    const results= await project.updateOne({
+      _id: id
+    }, {
+      $set: {
+        projectTask: {
+          title: title,
+       
+        }
+      }
+    });
+    res.status(200).json({ success: true,results:results });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+router.get('/projects/search',AuthMiddleware,async(req,res)=>{
+  const search=req.query.search
+  const{email,userId}=req.body
+
+try{  let id;
+  if(email){
+    const user = await users.findOne({ Email: email });
+    id=user._id
+  }
+  else{
+    id=userId
+  }
+  const projects=await project.find({UserId:id,Title:{$regex:search,$options:'i'}});
+  res.status(200).send({success:true,data:projects})
+}catch(error){
+  console.error(error);
+  res.status(500).send({ success: false, message: 'Internal Server Error' })
+}})
+
+router.get('/projects',AuthMiddleware,async(req,res)=>{
+  const search=req.query.date
+
+  const{email,userId}=req.body
+let id;
+try{
+  if(email){
+    const user = await users.findOne({ Email: email });
+    id=user._id
+  }
+  else{
+    id=userId
+  }
+  const tasks=await tasks.find({UserId:id,Date:search});
+  const findAllProjects=await project.find({UserId:id,Date:search});
+  const allPendingTasks=[...tasks,...findAllProjects]
+
+  res.status(200).send({success:true,data:allPendingTasks})
+
+}catch(error){
+  console.error(error);
+  res.status(500).send({ success: false, message: 'Internal Server Error' })
+}})
 
 module.exports = router;

@@ -1,109 +1,103 @@
 const { users, tasks, project } = require("../Models/Model");
 require("dotenv").config();
-const sendEmail = require("./EmailReminder"); 
+const sendEmail = require("./EmailReminder");
 
 
-const TasksReminder = async () => {
+const getTomorrow = () => {
     const today = new Date();
-    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1); 
+    return {
+        start: tomorrow.setHours(0, 0, 0, 0), 
+        end: tomorrow.setHours(23, 59, 59, 999), 
+    };
+};
 
-    const task = await tasks.find({ Date: { $gte: today, $lte: nextWeek } });
 
-    for (const t of task) {
-        const userId = t.UserId;
+const sendTaskEmail = async ({ email, subject, text }) => {
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject,
+        text,
+    };
+    await sendEmail(mailOptions);
+};
 
-        const user = await users.findById(userId);  
+
+const sendReminders = async (tasks, subjectPrefix) => {
+    for (const task of tasks) {
+        const user = await users.findById(task.UserId);
 
         if (!user) {
-            console.error(`User with ID ${userId} not found.`);
+            console.error(`User with ID ${task.UserId} not found.`);
             continue;
         }
 
         const { Email } = user;
-        const taskName = t.Title;
-        const taskDeadline = t.Date.getMinutes;
-        const taskDescription = t.Description;
-        const taskStatus = t.Status;
-
-        const mailOptions = {
-            from: process.env.EMAIL,
-            to: Email,
-            subject: "Task Reminder",
-            text: `Task Name: ${taskName} \n Task Description: ${taskDescription} \n Task Deadline: ${taskDeadline} \n Task Status: ${taskStatus}`,
-        };
-
-        await sendEmail(mailOptions);
+        const text = `Task Name: ${task.Title || task.title} \nDeadline: ${task.Date || task.date}\nStatus: ${task.Status || "Pending"}`;
+        await sendTaskEmail({ email: Email, subject: `${subjectPrefix} Reminder`, text });
     }
 };
 
-const ProjectTasksReminder = async () => {
-    const today = new Date();
-    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    const getAllTasks = await project.find(); 
+const TasksReminder = async () => {
+    const { start, end } = getTomorrow();
 
-    
-    const findTasks = getAllTasks.map((content) => content.projectTask);
-    const deadlineTasks = findTasks.flat().filter((task) => {
-        const taskDate = new Date(task.date);
-        return taskDate >= today && taskDate <= nextWeek;
+    const tasksDue = await tasks.find({
+        Date: {
+            $gte: start, 
+            $lt: end, 
+        },
     });
 
-    for (const task of deadlineTasks) {
-        const userId = task.UserId;
-        const user = await users.findById(userId);
+    await sendReminders(tasksDue, "Task");
+};
 
-        if (!user) {
-            console.error(`User with ID ${userId} not found.`);
-            continue;
-        }
 
-        const { Email } = user;
-        const mailOptions = {
-            from: process.env.EMAIL,
-            to: Email,
-            subject: "Project Task Reminder",
-            text: `Task Name: ${task.title} is due in one week.`,
-        };
+const ProjectTasksReminder = async () => {
+    const { start, end } = getTomorrow();
 
-        await sendEmail(mailOptions);
-    }
+    const allProjects = await project.find();
+    const tasksDue = allProjects
+        .map((proj) => proj.projectTask)
+        .flat()
+        .filter((task) => {
+            const taskDate = new Date(task.date);
+            return taskDate >= start && taskDate <= end;
+        });
+
+    await sendReminders(tasksDue, "Project Task");
 };
 
 
 const ProjectReminder = async () => {
-    const today = new Date();
-    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const { start, end } = getTomorrow();
 
-    
-    const projectDetails = await project.find({ Date: { $gte: today, $lte: nextWeek } });
+    const projectsDue = await project.find({
+        Date: {
+            $gte: start,
+            $lt: end, 
+        },
+    });
 
-    for (const proj of projectDetails) {
-        const userId = proj.UserId;
-        const user = await users.findById(userId);
+    for (const proj of projectsDue) {
+        const user = await users.findById(proj.UserId);
 
         if (!user) {
-            console.error(`User with ID ${userId} not found.`);
+            console.error(`User with ID ${proj.UserId} not found.`);
             continue;
         }
 
         const { Email } = user;
-        const projectName = proj.Title;
-        const projectDeadline = proj.Date;
-        const projectDescription = proj.Description;
-
-        const mailOptions = {
-            from: process.env.EMAIL,
-            to: Email,
-            subject: "Project Reminder",
-            text: `Project Name: ${projectName} \n Project Description: ${projectDescription} \n Project Deadline: ${projectDeadline}`,
-        };
-
-        await sendEmail(mailOptions);
+        const text = `Project Name: ${proj.Title}\nDeadline: ${proj.Date}`;
+        await sendTaskEmail({ email: Email, subject: "Project", text });
     }
 };
+
 
 TasksReminder();
 ProjectTasksReminder();
 ProjectReminder();
+
 module.exports = { TasksReminder, ProjectTasksReminder, ProjectReminder };
