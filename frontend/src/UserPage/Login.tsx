@@ -76,8 +76,8 @@ const onsubmit = async (data:Formdata) => {
       setInformation(result);
       
       
-      localStorage.setItem('accessToken', JSON.stringify(result.Accesstoken));
-      localStorage.setItem("refreshToken",JSON.stringify(result.Refreshtoken))
+      localStorage.setItem('accessToken', JSON.stringify(result.accessToken));
+      localStorage.setItem("refreshToken",JSON.stringify(result.refreshToken))
     }
 
     navigate('/dashboard');

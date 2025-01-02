@@ -25,6 +25,7 @@ export default function HorizonNav(){
     setShow(true);
   };
 
+  
   useEffect(() => {
       localStorage.setItem('theme', JSON.stringify(theme));
    

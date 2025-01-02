@@ -53,7 +53,10 @@ const Navbar = () => {
     
   }
 
- 
+ const deleteProject=(id:string)=>{
+  const newProjects=projects.filter((project)=>project._id!==id)
+  setProjects(newProjects)
+  }
 
  
   async function getProjects(){
@@ -210,7 +213,7 @@ overflow-y-scroll  gap-2 mt-4 rounded w-full ">
       <span className="py-1">
 
 
-<BasicMenu id={content._id}/>
+<BasicMenu deleteProject={deleteProject} id={content._id}/>
       </span>
       
       </div>
@@ -332,7 +335,7 @@ gap-2 mt-4 rounded w-full">
       <span className="py-1">
 
 
-<BasicMenu id={content._id}/>
+<BasicMenu deleteProject={deleteProject} id={content._id}/>
       </span>
       
       </div>

@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { FaAngleDown, FaUserAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router';
 
 export default function Profile() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -13,6 +14,14 @@ export default function Profile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const navigate=useNavigate()
+  const handleLogOut=()=>{
+      localStorage.clear();
+    
+      window.location.reload()
+      navigate('/');
+      
+    }
 
   return (
     <div>
@@ -42,7 +51,7 @@ export default function Profile() {
         }}
       >
        
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onClick={handleLogOut}>Logout</MenuItem>
       </Menu>
     </div>
   );

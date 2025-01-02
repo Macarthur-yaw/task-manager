@@ -6,8 +6,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import api_url from '../BaseUrl';
-
-export default function BasicMenu({id}:{id:string}) {
+type propsType={
+  id:string,
+  deleteProject:(id:string)=>void
+}
+export default function BasicMenu({id,deleteProject}:propsType) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -17,6 +20,7 @@ export default function BasicMenu({id}:{id:string}) {
     setAnchorEl(null);
   };
 
+
   const DeleteProject=async()=>{
 const getToken=localStorage.getItem('accessToken')
 let results: string = "";
@@ -24,6 +28,7 @@ if(getToken){
   results=JSON.parse(getToken)
 }
 
+deleteProject(id)
     try {
       await fetch(`${api_url}/projectTask/${id}`,{
         headers:{

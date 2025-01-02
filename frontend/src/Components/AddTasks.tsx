@@ -93,7 +93,7 @@ const AddTasks = ({ taskId,  handleCallback, inputContent, show, handleShow }: P
       console.error(error);
     } finally {
       setLoading(false);
-      handleShow();
+   
     }
   };
 
