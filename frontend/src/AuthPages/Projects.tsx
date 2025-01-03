@@ -1,132 +1,265 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import AddIcon from '@mui/icons-material/Add';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import AddProjectTask from "../Components/AddProjectTask";
-import api_url from "../BaseUrl";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
-interface Project {
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Menu, MenuItem } from '@mui/material';
+import api_url from "../BaseUrl";
+import AddProjectTasks from "../Components/AddProjectTask";
+import { useParams } from "react-router";
+
+interface Task {
   _id: string;
-  title: string;
-  description: string;
+  Title: string;
+  Description: string;
+  Status: string;
+  Date: string;
 }
 
-const Projects = () => {
-  const { id } = useParams();
-  const [add, setAdd] = useState<boolean>(false);
-  const [projects, setProjects] = useState<Project[]>([]);
+interface inputContent {
+  title?: string;
+  description?: string;
+  Date?: string;
+}
+
+const Projects: React.FC = () => {
+  const {id}=useParams();
+  const [data, setData] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [display, setDisplay] = useState<boolean>(false);
+  const [taskId, setTaskId] = useState<string>("");
+  const [inputContent, setInputContent] = useState<inputContent>({ title: "", description: "" });
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+  const [done, setDone] = useState<boolean>(false);
   const [theme, setTheme] = useState<boolean>(false);
-  const [menu, setMenu] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+ 
+  const [show, setShow] = useState<boolean>(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [actionType, setActionType] = useState<'delete' | 'in-progress' | null>(null);
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleShow = () => {
+    setShow(false);
+  };
+
+  function handleUpdate(id: string, index: number) {
+    setDisplay(true);
+    setTaskId(id);
+    setInputContent({
+      title: data[index].Title,
+      description: data[index].Description,
+      Date: data[index].Date,
+    });
+    setShow(true);
+    handleCallback();
+  }
+
+  function handleCallback(dataForms?: inputContent) {
+    console.log(dataForms);
+  }
+
+  const handleDialogOpen = (type: 'delete' | 'in-progress', taskId: string) => {
+    setActionType(type);
+    setCurrentTaskId(taskId);
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setActionType(null);
+    setCurrentTaskId(null);
+  };
+
+  const handleConfirmAction = async () => {
+    if (actionType === 'delete' && currentTaskId) {
+      await handleDelete(currentTaskId);
+    } else if (actionType === 'in-progress' && currentTaskId) {
+      await ChangeInProgress(currentTaskId, "in_progress");
+    }
+    handleDialogClose();
+  };
 
   useEffect(() => {
-    const theme = localStorage.getItem('theme');
-    setTheme(theme ? JSON.parse(theme) : false);
-    AddTasks();
+    fetchData();
 
-    async function AddTasks() {
-      try {
-        const userId = localStorage.getItem('accessToken');
-        let results;
-        if (userId) {
-          results = JSON.parse(userId);
+    const storedTheme = localStorage.getItem('theme');
+    setTheme(storedTheme ? JSON.parse(storedTheme) : false);
+  }, []);
+
+  const userId = localStorage.getItem('accessToken');
+  let results: string = "";
+  if (userId) {
+    results = JSON.parse(userId);
+  }
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${api_url}/projectTask/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${results}`
         }
-        const getData = await fetch(`${api_url}/projectTask/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${results}`
-          }
-        });
-        const changeResponse = await getData.json();
-        if (changeResponse.data) {
-          setProjects(changeResponse.data);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
+      });
+      const changeData = await response.json();
+      setData(changeData.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-  }, [id, theme]);
+  };
 
-  // Mock data for demonstration
-  const today = new Date().toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric' 
-  });
+  const handleDelete = async (id: string) => {
+    const getToken = localStorage.getItem('accessToken');
+    let results: string = "";
+    if (getToken) {
+      results = JSON.parse(getToken);
+    }
+    setLoading(true);
+    try {
+      await fetch(`${api_url}/projectTask/${id}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${results}`
+        }
+      });
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const ChangeInProgress = async (id: string, data: string) => {
+    try {
+      const getToken = localStorage.getItem('accessToken');
+      let results: string = "";
+      if (getToken) {
+        results = JSON.parse(getToken);
+      }
+      const response = await fetch(`${api_url}/tasks/status/${id}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${results}`
+        },
+        body: JSON.stringify({
+          status: data
+        })
+      });
+      await response.json();
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  function handleCheckbox(taskId: string) {
+    setCheckedItems((prevCheckedItems) => ({
+      ...prevCheckedItems,
+      [taskId]: !prevCheckedItems[taskId],
+    }));
+    ChangeInProgress(taskId, "completed");
+    setDone(true);
+  }
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, taskId: string) => {
+    setAnchorEl(event.currentTarget);
+    setCurrentTaskId(taskId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <div className={`max-w-4xl mx-auto ${theme ? 'bg-gray-900 text-white' : 'bg-white'} p-6`}>
-      {loading && <div className="h-1 bg-blue-500 absolute top-0 left-0 animate-pulse w-full" />}
-
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="font-medium">{today}</span>
-            <span className="text-red-500 text-sm bg-red-100 px-2 py-0.5 rounded">
-              Overtime Detected
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600">09:00:00</span>
-              <span className="text-red-500">+30:00</span>
-            </div>
-            <span className="text-gray-600">260</span>
-            <KeyboardArrowUpIcon className="text-gray-400 w-5 h-5" />
-          </div>
+    <div className={`${theme ? 'bg-[#1e1e1e] w-full  min-h-screen text-white' : ''} md:pt-4 pt-4`}>
+      {loading && (
+        <div className="absolute animate-progress-line top-0 left-0 h-1 bg-blue-500 animate-progress-line">
         </div>
-
-        <div className="space-y-4">
-          {projects.map((project, index) => (
-            <div key={index} className={`
-              rounded-lg border ${theme ? 'border-gray-700 bg-gray-800' : 'border-gray-200 shadow-lg'}
-              p-4 transition-all duration-200 hover:border-gray-400
-            `}>
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h3 className={`font-medium ${theme ? 'text-white' : 'text-gray-900'}`}>
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-gray-500">{project.description}</p>
-                </div>
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <span>08:17 AM - 09:29 AM</span>
-                    <span>01:10:00</span>
-                  </div>
-                  <span className="text-gray-600">$124.76</span>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <PlayCircleOutlineIcon className="text-gray-400" style={{ fontSize: "24px" }} />
-                  </button>
-                  <button 
-                    onClick={() => setMenu(!menu)} 
-                    className="p-1 hover:bg-gray-100 rounded"
-                  >
-                    <MoreHorizOutlinedIcon className="text-gray-400" style={{ fontSize: "24px" }} />
-                  </button>
+      )}
+      <div className="flex justify-between items-center px-6">
+        <div>
+          <h2 className={`text-2xl font-semibold ${theme ? 'text-white' : 'text-gray-800'}`}>Task List</h2>
+          <h3 className="text-sm text-gray-500">Add and manage your tasks effortlessly</h3>
+        </div>
+        <button onClick={()=>setShow(true)} className="bg-black text-white py-2 px-4 rounded-md  transition">+ Add Task</button>
+      </div>
+      <div className="mt-6 px-6">
+        <ul className="space-y-4">
+          {data.length>0 && data.map((task, index) => (
+            <li key={index} className="bg-white p-4 rounded-md shadow flex items-start justify-between">
+              <div className="flex items-start">
+                <input
+                  type="checkbox"
+                  checked={checkedItems[task._id] || false}
+                  onChange={() => handleCheckbox(task._id)}
+                  className="mr-4"
+                />
+                <div>
+                  <h3 className={`text-lg font-medium ${task.Status === 'completed' ? 'line-through text-gray-500' : ''}`}>{task.Title}</h3>
+                  <p className="text-sm text-gray-600">{task.Description}</p>
                 </div>
               </div>
-            </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleUpdate(task._id, index)}
+                  className="text-black"
+                >
+                  <EditOutlinedIcon />
+                </button>
+                <button onClick={(e) => handleMenuClick(e, task._id)}>
+                  <MoreVertOutlinedIcon />
+                </button>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl) && currentTaskId === task._id}
+                  onClose={handleMenuClose}
+                >
+                  <MenuItem onClick={() => handleDialogOpen('delete', task._id)}>Delete</MenuItem>
+                  <MenuItem onClick={() => handleDialogOpen('in-progress', task._id)}>Mark as In Progress</MenuItem>
+                </Menu>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
+      <AddProjectTasks
+        show={show}
+        handleShow={handleShow}
+        taskId={taskId}
+        onTaskUpdate={fetchData}
+        inputContent={inputContent}
+        display={display}
+      />
 
-      {add && <AddProjectTask id={id} />}
-      <div className="mt-6">
-        <button 
-          onClick={() => setAdd(!add)} 
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg 
-            ${theme ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-700'} 
-            hover:bg-gray-200 transition-colors duration-200`}
-        >
-          <AddIcon style={{ fontSize: "20px" }} />
-          Add Task
-        </button>
-      </div>
+      {done && (
+        <div className="fixed bottom-4 left-4 bg-green-500 text-white py-2 px-4 rounded-md flex items-center space-x-2">
+          <span>You have completed the task</span>
+          <CloseOutlinedIcon className="cursor-pointer" onClick={() => setDone(false)} />
+        </div>
+      )}
+
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>
+          {actionType === 'delete' ? 'Confirm Deletion' : 'Change Status'}
+        </DialogTitle>
+        <DialogContent>
+          <p>
+            Are you sure you want to {actionType === 'delete' ? 'delete' : 'mark as in progress'} this task?
+          </p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="secondary">
+            Cancel
+          </Button>
+
+          <Button onClick={handleConfirmAction} color="primary">
+            {actionType === 'delete' ? 'Delete' : 'Mark as In Progress'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

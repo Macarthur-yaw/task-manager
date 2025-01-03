@@ -233,7 +233,9 @@ overflow-y-scroll  gap-2 mt-4 rounded w-full ">
 
         </nav>
         
-              <AddTasks show={show} handleShow={handleShow} />
+              <AddTasks
+             
+              show={show} handleShow={handleShow} />
       
       </div>
    

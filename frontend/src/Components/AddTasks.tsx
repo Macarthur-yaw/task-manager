@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,9 +11,8 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
-import axios from 'axios';
+
 import api_url from '../BaseUrl';
-import { useSubmitTask } from '../hooks/useSubmit';
 
 interface InitialState {
   title?: string;
@@ -25,12 +24,12 @@ interface PropTypes {
   taskId?: string;
   display?: boolean;
   inputContent?: InitialState;
-  handleCallback?: (forminfo?: InitialState) => void;
+  onTaskUpdate?: () => void;
   show: boolean;
   handleShow: () => void;
 }
 
-const AddTasks = ({ taskId,  handleCallback, inputContent, show, handleShow }: PropTypes) => {
+const AddTasks = ({ taskId, onTaskUpdate, inputContent, show, handleShow }: PropTypes) => {
   const [theme, setTheme] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
@@ -41,8 +40,6 @@ const AddTasks = ({ taskId,  handleCallback, inputContent, show, handleShow }: P
     setValue,
     formState: { errors },
   } = useForm<InitialState>();
-
-  const { submitTask } = useSubmitTask();
 
   const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
@@ -69,31 +66,38 @@ const AddTasks = ({ taskId,  handleCallback, inputContent, show, handleShow }: P
     };
     setLoading(true);
     try {
-      const FormData = { ...data };
-
+      let results = userId ? JSON.parse(userId) : "";
+      
       if (taskId) {
-        await axios.put(
-          `https://web-api-db7z.onrender.com/api/update/${userId}/${taskId}`,
-          FormData
-        );
-      } else {
-        submitTask({
-          apiUrl: `${api_url}/tasks`,
-          formData: formData,
-          selectedDate: selectedDate?.toISOString(),
+        await fetch(`${api_url}/tasks/${taskId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${results}`,
+          },
+          body: JSON.stringify(formData),
         });
-        reset();
-        setSelectedDate(null);
+      } else {
+        await fetch(`${api_url}/tasks`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${results}`,
+          },
+          body: JSON.stringify(formData),
+        });
       }
-
-      if (handleCallback) {
-        handleCallback(FormData);
-      }
+if(onTaskUpdate){
+  onTaskUpdate();
+}
+    
+      reset();
+      setSelectedDate(null);
+      handleShow();
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
-   
     }
   };
 
