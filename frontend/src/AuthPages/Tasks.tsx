@@ -14,6 +14,7 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs, { Dayjs } from "dayjs";
 import api_url from "../BaseUrl";
 
+
 interface Task {
   id: number;
   Title: string;
@@ -72,9 +73,13 @@ const TaskDashboard: React.FC = () => {
  
 
   return (
-    <div className="p-4 bg-gray-50 h-screen">
-      <div className="flex flex-col sm:flex-row gap-6">
-        
+    <div className="p-4 bg-gray-50 border h-full">
+
+      <div className="flex flex-col   ">
+
+
+
+      <div className="flex flex-row">
         <div className="flex-1 bg-white p-4 rounded-lg shadow-md">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateCalendar
@@ -113,6 +118,7 @@ const TaskDashboard: React.FC = () => {
               ))}
             </div>
           </Box>
+        </div>
         </div>
       </div>
     </div>

@@ -10,8 +10,8 @@ import { useParams } from "react-router";
 
 interface Task {
   _id: string;
-  Title: string;
-  Description: string;
+  title: string;
+  description: string;
   Status: string;
   Date: string;
 }
@@ -47,8 +47,8 @@ const Projects: React.FC = () => {
     setDisplay(true);
     setTaskId(id);
     setInputContent({
-      title: data[index].Title,
-      description: data[index].Description,
+      title: data[index].title,
+      description: data[index].description,
       Date: data[index].Date,
     });
     setShow(true);
@@ -198,8 +198,8 @@ const Projects: React.FC = () => {
                   className="mr-4"
                 />
                 <div>
-                  <h3 className={`text-lg font-medium ${task.Status === 'completed' ? 'line-through text-gray-500' : ''}`}>{task.Title}</h3>
-                  <p className="text-sm text-gray-600">{task.Description}</p>
+                  <h3 className={`text-lg font-medium ${task.Status === 'completed' ? 'line-through text-gray-500' : ''}`}>{task.title}</h3>
+                  <p className="text-sm text-gray-600">{task.description}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
